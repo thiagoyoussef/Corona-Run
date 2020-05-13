@@ -3,16 +3,16 @@ import random
 from os import path
 
 # Estabelece a pasta que contem as figuras e sons.
-img_dir = path.join(path.dirname("foto"), 'img')
+img_dir = path.join(path.dirname(__file__), 'img')
 
 # Dados gerais do jogo.
 TITULO = 'Exemplo de Fundo em Movimento'
 WIDTH = 1024 # Largura da tela
 HEIGHT = 768 # Altura da tela
 FPS = 60 # Frames por segundo
-PLAYER_IMG = 'coronita'
-BLOCK_IMG = 'boss'
-BACKGROUND_IMG = 'fundo'
+PLAYER_IMG = 'coronita.png'
+BLOCK_IMG = 'boss.png'
+BACKGROUND_IMG = 'full_background.png'
 
 # Define algumas variáveis com as cores básicas
 WHITE = (255, 255, 255)
@@ -81,9 +81,9 @@ class Player(pygame.sprite.Sprite):
 # Carrega todos os assets de uma vez.
 def load_assets(img_dir):
     assets = {}
-    assets[PLAYER_IMG] = pygame.image.load(path.join(img_dir, 'hero-single.png')).convert_alpha()
+    assets[PLAYER_IMG] = pygame.image.load(path.join(img_dir, PLAYER_IMG)).convert_alpha()
     assets[BLOCK_IMG] = pygame.image.load(path.join(img_dir, 'tile-block.png')).convert()
-    assets[BACKGROUND_IMG] = pygame.image.load(path.join(img_dir, 'background.png')).convert()
+    assets[BACKGROUND_IMG] = pygame.image.load(path.join(img_dir, BACKGROUND_IMG)).convert()
     return assets
 
 
