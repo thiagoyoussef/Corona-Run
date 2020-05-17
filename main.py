@@ -6,7 +6,7 @@ from os import path
 img_dir = path.join(path.dirname(__file__), 'img')
 
 # Dados gerais do jogo.
-TITULO = 'Exemplo de Fundo em Movimento'
+TITULO = 'Corona Run'
 WIDTH = 1024 # Largura da tela
 HEIGHT = 768 # Altura da tela
 FPS = 60 # Frames por segundo
@@ -21,6 +21,18 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+
+# Define a aceleração da gravidade
+GRAVITY = 2
+# Define a velocidade inicial no pulo
+JUMP_SIZE = 30
+# Define a altura do chão
+GROUND = HEIGHT * 5 // 6
+
+# Define estados possíveis do jogador
+STILL = 0
+JUMPING = 1
+FALLING = 2
 
 # Define a velocidade inicial do mundo
 world_speed = -10
@@ -68,6 +80,10 @@ class Player(pygame.sprite.Sprite):
         # Aumenta o tamanho da imagem
         player_img = pygame.transform.scale(player_img, (100, 160))
 
+        # Define estado atual
+        # Usamos o estado para decidir se o jogador pode ou não pular
+        self.state = STILL
+
         # Define a imagem do sprite. Nesse exemplo vamos usar uma imagem estática (não teremos animação durante o pulo)
         self.image = player_img
         # Detalhes sobre o posicionamento.
@@ -76,6 +92,32 @@ class Player(pygame.sprite.Sprite):
         # Começa no centro da janela
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = int(HEIGHT * 7 / 8)
+        self.rect.top = 0
+
+        self.speedy = 0
+
+    # Metodo que atualiza a posição do personagem
+    def update(self):
+        self.speedy += GRAVITY
+        # Atualiza o estado para caindo
+        if self.speedy > 0:
+            self.state = FALLING
+        self.rect.y += self.speedy
+        # Se bater no chão, para de cair
+        if self.rect.bottom > GROUND:
+            # Reposiciona para a posição do chão
+            self.rect.bottom = GROUND
+            # Para de cair
+            self.speedy = 0
+            # Atualiza o estado para parado
+            self.state = STILL
+
+    # Método que faz o personagem pular
+    def jump(self):
+        # Só pode pular se ainda não estiver pulando ou caindo
+        if self.state == STILL:
+            self.speedy -= JUMP_SIZE
+            self.state = JUMPING
 
 
 # Carrega todos os assets de uma vez.
@@ -110,13 +152,14 @@ def game_screen(screen):
     # Esses sprites vão andar junto com o mundo (fundo)
     world_sprites = pygame.sprite.Group()
     # Cria blocos espalhados em posições aleatórias do mapa
-    for i in range(INITIAL_BLOCKS):
-        block_x = random.randint(0, WIDTH)
-        block_y = random.randint(0, int(HEIGHT * 0.5))
-        block = Tile(assets[BLOCK_IMG], block_x, block_y, world_speed)
-        world_sprites.add(block)
-        # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
-        all_sprites.add(block)
+# Comentarios desabilitam os blocos
+#    for i in range(INITIAL_BLOCKS):
+#        block_x = random.randint(0, WIDTH)
+#        block_y = random.randint(0, int(HEIGHT * 0.5))
+#        block = Tile(assets[BLOCK_IMG], block_x, block_y, world_speed)
+#        world_sprites.add(block)
+#        # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
+#        all_sprites.add(block)
 
     PLAYING = 0
     DONE = 1
@@ -133,6 +176,12 @@ def game_screen(screen):
             # Verifica se foi fechado.
             if event.type == pygame.QUIT:
                 state = DONE
+
+            # Verifica se soltou alguma tecla.
+            if event.type == pygame.KEYDOWN:
+                # Dependendo da tecla, altera o estado do jogador.
+                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+                    player.jump()
 
         # Depois de processar os eventos.
         # Atualiza a acao de cada sprite. O grupo chama o método update() de cada Sprite dentre dele.
@@ -181,12 +230,6 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 # Nome do jogo
 pygame.display.set_caption(TITULO)
-
-# Imprime instruções
-print('*' * len(TITULO))
-print(TITULO.upper())
-print('*' * len(TITULO))
-print('Este exemplo não é interativo.')
 
 # Comando para evitar travamentos.
 try:
