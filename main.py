@@ -7,10 +7,10 @@ img_dir = path.join(path.dirname(__file__), 'img')
 
 # Dados gerais do jogo.
 TITULO = 'Corona Run'
-WIDTH = 1024 # Largura da tela
+WIDTH = 1250 # Largura da tela
 HEIGHT = 768 # Altura da tela
 FPS = 60 # Frames por segundo
-PLAYER_IMG = 'coronita.png'
+PLAYER_IMG = 'dino.png'
 BLOCK_IMG = 'boss.png'
 BACKGROUND_IMG = 'full_background.png'
 
@@ -27,19 +27,26 @@ GRAVITY = 2
 # Define a velocidade inicial no pulo
 JUMP_SIZE = 30
 # Define a altura do chão
-GROUND = HEIGHT * 5 // 6
+GROUND = HEIGHT * 8/9
 
 # Define estados possíveis do jogador
 STILL = 0
 JUMPING = 1
 FALLING = 2
+## CROWCH = 3
+## DEATH = 4
 
 # Define a velocidade inicial do mundo
 world_speed = -10
 
-# Outras constantes
-INITIAL_BLOCKS = 6
-TILE_SIZE = 80
+
+# Carrega todos os assets de uma vez.
+def load_assets(img_dir):
+    assets = {}
+    assets[PLAYER_IMG] = pygame.image.load(path.join(img_dir, PLAYER_IMG)).convert_alpha()
+    assets[BLOCK_IMG] = pygame.image.load(path.join(img_dir, 'tile-block.png')).convert()
+    assets[BACKGROUND_IMG] = pygame.image.load(path.join(img_dir, BACKGROUND_IMG)).convert()
+    return assets
 
 
 # Class que representa os blocos do cenário
@@ -86,11 +93,12 @@ class Player(pygame.sprite.Sprite):
 
         # Define a imagem do sprite. Nesse exemplo vamos usar uma imagem estática (não teremos animação durante o pulo)
         self.image = player_img
+
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
 
         # Começa no centro da janela
-        self.rect.centerx = WIDTH / 2
+        self.rect.centerx = WIDTH / 10
         self.rect.bottom = int(HEIGHT * 7 / 8)
         self.rect.top = 0
 
@@ -112,6 +120,7 @@ class Player(pygame.sprite.Sprite):
             # Atualiza o estado para parado
             self.state = STILL
 
+
     # Método que faz o personagem pular
     def jump(self):
         # Só pode pular se ainda não estiver pulando ou caindo
@@ -120,16 +129,9 @@ class Player(pygame.sprite.Sprite):
             self.state = JUMPING
 
 
-# Carrega todos os assets de uma vez.
-def load_assets(img_dir):
-    assets = {}
-    assets[PLAYER_IMG] = pygame.image.load(path.join(img_dir, PLAYER_IMG)).convert_alpha()
-    assets[BLOCK_IMG] = pygame.image.load(path.join(img_dir, 'tile-block.png')).convert()
-    assets[BACKGROUND_IMG] = pygame.image.load(path.join(img_dir, BACKGROUND_IMG)).convert()
-    return assets
-
 
 def game_screen(screen):
+
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
 
@@ -151,15 +153,6 @@ def game_screen(screen):
     # Cria um grupo para guardar somente os sprites do mundo (obstáculos, objetos, etc).
     # Esses sprites vão andar junto com o mundo (fundo)
     world_sprites = pygame.sprite.Group()
-    # Cria blocos espalhados em posições aleatórias do mapa
-# Comentarios desabilitam os blocos
-#    for i in range(INITIAL_BLOCKS):
-#        block_x = random.randint(0, WIDTH)
-#        block_y = random.randint(0, int(HEIGHT * 0.5))
-#        block = Tile(assets[BLOCK_IMG], block_x, block_y, world_speed)
-#        world_sprites.add(block)
-#        # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
-#        all_sprites.add(block)
 
     PLAYING = 0
     DONE = 1
@@ -186,17 +179,6 @@ def game_screen(screen):
         # Depois de processar os eventos.
         # Atualiza a acao de cada sprite. O grupo chama o método update() de cada Sprite dentre dele.
         all_sprites.update()
-
-        # Verifica se algum bloco saiu da janela
-        for block in world_sprites:
-            if block.rect.right < 0:
-                # Destrói o bloco e cria um novo no final da tela
-                block.kill()
-                block_x = random.randint(WIDTH, int(WIDTH * 1.5))
-                block_y = random.randint(0, int(HEIGHT * 0.5))
-                new_block = Tile(assets[BLOCK_IMG], block_x, block_y, world_speed)
-                all_sprites.add(new_block)
-                world_sprites.add(new_block)
 
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
