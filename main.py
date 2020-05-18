@@ -10,7 +10,7 @@ TITULO = 'Corona Run'
 WIDTH = 1024 # Largura da tela
 HEIGHT = 768 # Altura da tela
 FPS = 60 # Frames por segundo
-PLAYER_IMG = 'dino.png'
+PLAYER_IMG = 'coronita.png'
 BLOCK_IMG = 'boss.png'
 BACKGROUND_IMG = 'full_background.png'
 
@@ -33,7 +33,6 @@ GROUND = HEIGHT * 5 // 6
 STILL = 0
 JUMPING = 1
 FALLING = 2
-CROWCHING = 3
 
 # Define a velocidade inicial do mundo
 world_speed = -10
@@ -67,32 +66,6 @@ class Tile(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speedx
-
-# Recebe uma imagem de sprite sheet e retorna uma lista de imagens. 
-# É necessário definir quantos sprites estão presentes em cada linha e coluna.
-# Essa função assume que os sprites no sprite sheet possuem todos o mesmo tamanho.
-def load_spritesheet(spritesheet, rows, columns):
-    # Calcula a largura e altura de cada sprite.
-    sprite_width = spritesheet.get_width() // columns
-    sprite_height = spritesheet.get_height() // rows
-    
-    # Percorre todos os sprites adicionando em uma lista.
-    sprites = []
-    for row in range(rows):
-        for column in range(columns):
-            # Calcula posição do sprite atual
-            x = column * sprite_width
-            y = row * sprite_height
-            # Define o retângulo que contém o sprite atual
-            dest_rect = pygame.Rect(x, y, sprite_width, sprite_height)
-
-            # Cria uma imagem vazia do tamanho do sprite
-            image = pygame.Surface((sprite_width, sprite_height))
-            # Copia o sprite atual (do spritesheet) na imagem
-            image.blit(spritesheet, (0, 0), dest_rect)
-            sprites.append(image)
-    return sprites
-
 
 
 # Classe Jogador que representa o herói
@@ -145,16 +118,7 @@ class Player(pygame.sprite.Sprite):
         if self.state == STILL:
             self.speedy -= JUMP_SIZE
             self.state = JUMPING
-     # Método que faz o personagem agachar
-    def crowch(self):
-        # Só pode agachar se estiver no chão
-        if self.state == STILL:
-            self.state = CROWCHING
-    # Define sequências de sprites de cada animação
-        spritesheet = load_spritesheet(dino_mov.png, 0, 1)
-        self.animations = {
-            CROWCH: spritesheet[0:1],
-        }
+
 
 # Carrega todos os assets de uma vez.
 def load_assets(img_dir):
@@ -218,9 +182,7 @@ def game_screen(screen):
                 # Dependendo da tecla, altera o estado do jogador.
                 if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                     player.jump()
-                elif event.key == pygame.K_DOWN:
-                    player.crowch()
-            
+
         # Depois de processar os eventos.
         # Atualiza a acao de cada sprite. O grupo chama o método update() de cada Sprite dentre dele.
         all_sprites.update()
