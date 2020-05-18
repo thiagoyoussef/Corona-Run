@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 from os import path
 
 # Estabelece a pasta que contem as figuras e sons.
@@ -11,7 +12,7 @@ WIDTH = 1250 # Largura da tela
 HEIGHT = 768 # Altura da tela
 FPS = 60 # Frames por segundo
 PLAYER_IMG = 'dino.png'
-BLOCK_IMG = 'boss.png'
+BOSS_IMG = 'boss.png'
 BACKGROUND_IMG = 'full_background.png'
 CACTOS_IMG = 'cactos.png'
 
@@ -50,6 +51,32 @@ def load_assets(img_dir):
     assets[CACTOS_IMG] = pygame.image.load(path.join(img_dir, CACTOS_IMG)).convert()
     return assets
 
+
+#animacoes quando o personagem anda
+def load_spritesheet(spritesheet, rows, columns):
+    # Calcula a largura e altura de cada sprite.
+    sprite_width = spritesheet.get_width() // columns
+    sprite_height = spritesheet.get_height() // rows
+    
+    # Percorre todos os sprites adicionando em uma lista.
+    sprites = []
+    for row in range(rows):
+        for column in range(columns):
+            # Calcula posição do sprite atual
+            x = column * sprite_width
+            y = row * sprite_height
+            # Define o retângulo que contém o sprite atual
+            dest_rect = pygame.Rect(x, y, sprite_width, sprite_height)
+
+            # Cria uma imagem vazia do tamanho do sprite
+            image = pygame.Surface((sprite_width, sprite_height))
+            # Copia o sprite atual (do spritesheet) na imagem
+            image.blit(spritesheet, (0, 0), dest_rect)
+            sprites.append(image)
+    return sprites
+
+
+
 # Classe Jogador que representa o herói
 class Player(pygame.sprite.Sprite):
 
@@ -60,32 +87,60 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         # Aumenta o tamanho da imagem
-        player_img = pygame.transform.scale(player_img, (100, 160))
+        player_img = pygame.transform.scale(player_img, (250, 100))
 
+
+        # Define sequências de sprites de cada animação
+        spritesheet = load_spritesheet(player_img, 1, 5)
+        self.animations = {
+            STILL: spritesheet[2:4],
+            JUMPING: spritesheet[2:3],
+            FALLING: spritesheet[3:4],
+        }
         # Define estado atual
         # Usamos o estado para decidir se o jogador pode ou não pular
         self.state = STILL
 
-        # Define a imagem do sprite. Nesse exemplo vamos usar uma imagem estática (não teremos animação durante o pulo)
-        self.image = player_img
+        # Define animação atual
+        self.animation = self.animations[self.state]
+
+        # Inicializa o primeiro quadro da animação
+        self.frame = 0
+        self.image = self.animation[self.frame]
 
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
 
-        # Começa no inicio da janela
+        # Começa no centro da janela
         self.rect.centerx = WIDTH / 10
         self.rect.bottom = int(HEIGHT * 7 / 8)
         self.rect.top = 0
 
         self.speedy = 0
+        
+        # Guarda o tick da primeira imagem
+        self.last_update = pygame.time.get_ticks()
+
+        # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
+        self.frame_ticks = 75
+
+    # Método que faz o personagem pular
+    def jump(self):
+        # Só pode pular se ainda não estiver pulando ou caindo
+        if self.state == STILL:
+            self.speedy -= JUMP_SIZE
+            self.state = JUMPING
 
     # Metodo que atualiza a posição do personagem
     def update(self):
+
         self.speedy += GRAVITY
+
         # Atualiza o estado para caindo
         if self.speedy > 0:
             self.state = FALLING
         self.rect.y += self.speedy
+
         # Se bater no chão, para de cair
         if self.rect.bottom > GROUND:
             # Reposiciona para a posição do chão
@@ -95,13 +150,37 @@ class Player(pygame.sprite.Sprite):
             # Atualiza o estado para parado
             self.state = STILL
 
+        # update de movimentcao 
+        # Verifica o tick atual.
+        now = pygame.time.get_ticks()
 
-    # Método que faz o personagem pular
-    def jump(self):
-        # Só pode pular se ainda não estiver pulando ou caindo
-        if self.state == STILL:
-            self.speedy -= JUMP_SIZE
-            self.state = JUMPING
+        # Verifica quantos ticks se passaram desde a ultima mudança de frame.
+        elapsed_ticks = now - self.last_update
+
+        # Se já está na hora de mudar de imagem...
+        if elapsed_ticks > self.frame_ticks:
+
+            # Marca o tick da nova imagem.
+            self.last_update = now
+
+            # Avança um quadro.
+            self.frame += 1
+
+            # Atualiza animação atual
+            self.animation = self.animations[self.state]
+            
+            # Reinicia a animação caso o índice da imagem atual seja inválido
+            if self.frame >= len(self.animation):
+                self.frame = 0
+            
+            # Armazena a posição do centro da imagem
+            center = self.rect.center
+            # Atualiza imagem atual
+            self.image = self.animation[self.frame]
+            # Atualiza os detalhes de posicionamento
+            self.rect = self.image.get_rect()
+            self.rect.center = center
+
 
 # Classe que reprenta os cactos
 class Cactos(pygame.sprite.Sprite):
@@ -109,7 +188,7 @@ class Cactos(pygame.sprite.Sprite):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
         # Diminui o tamanho da imagem
-        cactos_img = pygame.transform.scale(cactos_img, (70, 150))
+        cactos_img = pygame.transform.scale(cactos_img, (70, 100))
         self.image = cactos_img
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
@@ -146,10 +225,11 @@ def game_screen(screen):
     # Esses sprites vão andar junto com o mundo (fundo)
     world_sprites = pygame.sprite.Group()
 
+    #### precisa fazer funcionar criando uma lista aleatoria para o cacto 
     # Cria cactos espalhados em posições aleatórias do mapa
     for i in range(INITIAL_CACTOS):
-        cacto_x = 1160
-        cacto_y = 600
+        cacto_x =   WIDTH / 2
+        cacto_y = HEIGHT * 7/8
         cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
         world_sprites.add(cacto)
         # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
@@ -166,7 +246,6 @@ def game_screen(screen):
 
         # Processa os eventos (mouse, teclado, botão, etc).
         for event in pygame.event.get():
-            print(event)
             # Verifica se foi fechado.
             if event.type == pygame.QUIT:
                 state = DONE
