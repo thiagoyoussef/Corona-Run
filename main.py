@@ -52,7 +52,7 @@ def load_assets(img_dir):
     return assets
 
 
-#animacoes quando o personagem anda
+# Animacoes quando o personagem anda
 def load_spritesheet(spritesheet, rows, columns):
     # Calcula a largura e altura de cada sprite.
     sprite_width = spritesheet.get_width() // columns
@@ -224,16 +224,21 @@ def game_screen(screen):
     # Cria um grupo para guardar somente os sprites do mundo (obstáculos, objetos, etc).
     # Esses sprites vão andar junto com o mundo (fundo)
     world_sprites = pygame.sprite.Group()
+    
+    # Cria um grupo para os cactos
+    all_cactos = pygame.sprite.Group()
 
     #### precisa fazer funcionar criando uma lista aleatoria para o cacto 
     # Cria cactos espalhados em posições aleatórias do mapa
     for i in range(INITIAL_CACTOS):
-        cacto_x =   WIDTH / 2
-        cacto_y = HEIGHT * 7/8
+        cacto_x =   WIDTH / 1.08695652
+        cacto_y = HEIGHT / 1.39636364
         cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
         world_sprites.add(cacto)
         # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
         all_sprites.add(cacto)
+        all_cactos.add(cacto)
+        
 
     PLAYING = 0
     DONE = 1
@@ -260,16 +265,22 @@ def game_screen(screen):
         # Atualiza a acao de cada sprite. O grupo chama o método update() de cada Sprite dentre dele.
         all_sprites.update()
 
+        # Verifica se houve colisão entre nave e meteoro
+        hits = pygame.sprite.spritecollide(player, all_cactos, True)
+        if len(hits) > 0:
+            state = DONE
+
         # Verifica se algum cacto saiu da janela
         for cacto in world_sprites:
             if cacto.rect.right < 0:
                 # Destrói o cacto e cria um novo no final da tela
                 cacto.kill()
-                cacto_x = 1160
-                cacto_y = 600
+                cacto_x =   WIDTH / 1.08695652
+                cacto_y = HEIGHT / 1.39636364
                 new_cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
                 all_sprites.add(new_cacto)
                 world_sprites.add(new_cacto)
+                all_cactos.add(new_cacto)
 
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
