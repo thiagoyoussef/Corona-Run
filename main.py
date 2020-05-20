@@ -8,13 +8,14 @@ img_dir = path.join(path.dirname(__file__), 'img')
 
 # Dados gerais do jogo.
 TITULO = 'Corona Run'
-WIDTH = 1250 # Largura da tela
-HEIGHT = 768 # Altura da tela
+WIDTH = 1000 # Largura da tela
+HEIGHT = 600 # Altura da tela
 FPS = 60 # Frames por segundo
 PLAYER_IMG = 'dino.png'
 BOSS_IMG = 'boss.png'
 BACKGROUND_IMG = 'full_background.png'
 CACTOS_IMG = 'cactos.png'
+SCORE_FONT = 'PressStart2P.ttf'
 
 # Define algumas variáveis com as cores básicas
 WHITE = (255, 255, 255)
@@ -29,7 +30,7 @@ GRAVITY = 2
 # Define a velocidade inicial no pulo
 JUMP_SIZE = 30
 # Define a altura do chão
-GROUND = HEIGHT * 7/8
+GROUND = HEIGHT / 1.183
 
 # Define estados possíveis do jogador
 STILL = 0
@@ -49,6 +50,7 @@ def load_assets(img_dir):
     assets[PLAYER_IMG] = pygame.image.load(path.join(img_dir, PLAYER_IMG)).convert_alpha()
     assets[BACKGROUND_IMG] = pygame.image.load(path.join(img_dir, BACKGROUND_IMG)).convert()
     assets[CACTOS_IMG] = pygame.image.load(path.join(img_dir, CACTOS_IMG)).convert()
+    assets[SCORE_FONT] = pygame.font.Font(SCORE_FONT, 28)
     return assets
 
 
@@ -232,13 +234,14 @@ def game_screen(screen):
     # Cria cactos espalhados em posições aleatórias do mapa
     for i in range(INITIAL_CACTOS):
         cacto_x =   WIDTH / 1.08695652
-        cacto_y = HEIGHT / 1.39636364
+        cacto_y = HEIGHT / 1.47
         cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
         world_sprites.add(cacto)
         # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
         all_sprites.add(cacto)
         all_cactos.add(cacto)
-        
+    
+    score = 0
 
     PLAYING = 0
     DONE = 1
@@ -254,7 +257,7 @@ def game_screen(screen):
             # Verifica se foi fechado.
             if event.type == pygame.QUIT:
                 state = DONE
-
+            print(event)
             # Verifica se soltou alguma tecla.
             if event.type == pygame.KEYDOWN:
                 # Dependendo da tecla, altera o estado do jogador.
@@ -264,7 +267,8 @@ def game_screen(screen):
         # Depois de processar os eventos.
         # Atualiza a acao de cada sprite. O grupo chama o método update() de cada Sprite dentre dele.
         all_sprites.update()
-
+        # Adiciona pontos ao score
+        score += 10
         # Verifica se houve colisão entre nave e meteoro
         hits = pygame.sprite.spritecollide(player, all_cactos, True)
         if len(hits) > 0:
@@ -276,7 +280,7 @@ def game_screen(screen):
                 # Destrói o cacto e cria um novo no final da tela
                 cacto.kill()
                 cacto_x =   WIDTH / 1.08695652
-                cacto_y = HEIGHT / 1.39636364
+                cacto_y = HEIGHT / 1.47
                 new_cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
                 all_sprites.add(new_cacto)
                 world_sprites.add(new_cacto)
@@ -287,19 +291,28 @@ def game_screen(screen):
 
         # Atualiza a posição da imagem de fundo.
         background_rect.x += world_speed
+        
         # Se o fundo saiu da janela, faz ele voltar para dentro.
         if background_rect.right < 0:
             background_rect.x += background_rect.width
+        
         # Desenha o fundo e uma cópia para a direita.
         # Assumimos que a imagem selecionada ocupa pelo menos o tamanho da janela.
         # Além disso, ela deve ser cíclica, ou seja, o lado esquerdo deve ser continuação do direito.
         screen.blit(background, background_rect)
+        
         # Desenhamos a imagem novamente, mas deslocada da largura da imagem em x.
         background_rect2 = background_rect.copy()
         background_rect2.x += background_rect2.width
         screen.blit(background, background_rect2)
 
         all_sprites.draw(screen)
+
+        # Desenhando o score
+        text_surface = assets[SCORE_FONT].render("{:08d}".format(score), True, BLACK)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (WIDTH / 2,  10)
+        screen.blit(text_surface, text_rect)
 
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
@@ -320,4 +333,3 @@ try:
     game_screen(screen)
 finally:
     pygame.quit()
-    
