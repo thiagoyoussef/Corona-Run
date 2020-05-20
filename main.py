@@ -6,6 +6,10 @@ from os import path
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
 
+# Inicialização do Pygame.
+pygame.init()
+pygame.mixer.init()
+
 # Dados gerais do jogo.
 TITULO = 'Corona Run'
 WIDTH = 1000 # Largura da tela
@@ -16,6 +20,11 @@ BOSS_IMG = 'boss.png'
 BACKGROUND_IMG = 'full_background.png'
 CACTOS_IMG = 'cactos.png'
 SCORE_FONT = 'PressStart2P.ttf'
+GAME_OVER_IMG = 'game_over.png'
+
+# Carrega som do jogo
+pygame.mixer.music.load('sounds/mario_music.ogg')
+pygame.mixer.music.set_volume(0.4)
 
 # Define algumas variáveis com as cores básicas
 WHITE = (255, 255, 255)
@@ -36,8 +45,8 @@ GROUND = HEIGHT / 1.183
 STILL = 0
 JUMPING = 1
 FALLING = 2
-## CROWCH = 3
-## DEATH = 4
+# CROWCH = 3
+# DEATH = 4
 
 # Define a velocidade inicial do mundo
 world_speed = -10
@@ -51,6 +60,8 @@ def load_assets(img_dir):
     assets[BACKGROUND_IMG] = pygame.image.load(path.join(img_dir, BACKGROUND_IMG)).convert()
     assets[CACTOS_IMG] = pygame.image.load(path.join(img_dir, CACTOS_IMG)).convert()
     assets[SCORE_FONT] = pygame.font.Font(SCORE_FONT, 28)
+    assets[GAME_OVER_IMG] = pygame.image.load(path.join(img_dir, GAME_OVER_IMG)).convert()
+
     return assets
 
 
@@ -77,7 +88,25 @@ def load_spritesheet(spritesheet, rows, columns):
             sprites.append(image)
     return sprites
 
+# Funcao que adiciona tela de game over
+def game_over_screen(screen, game_over_img):
 
+    # Redimensiona o tamanho da imagem
+    game_over_img = pygame.transform.scale(game_over_img, (int(WIDTH/2.114) , int(HEIGHT/2.4)))
+    background_rect = game_over_img.get_rect()
+    # Centraliza a imagem
+    background_rect.centerx = WIDTH / 2
+    background_rect.bottom = int(HEIGHT / 1.5)
+    
+    # Desenha a imagem
+    screen.fill(BLACK)
+    screen.blit(game_over_img, background_rect)
+    pygame.display.flip()
+
+    # Pausa o jogo na tela de game over
+    time.sleep(5)
+    
+    return 1
 
 # Classe Jogador que representa o herói
 class Player(pygame.sprite.Sprite):
@@ -207,7 +236,6 @@ def game_screen(screen):
 
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
-
     # Carrega assets
     assets = load_assets(img_dir)
 
@@ -230,10 +258,9 @@ def game_screen(screen):
     # Cria um grupo para os cactos
     all_cactos = pygame.sprite.Group()
 
-    #### precisa fazer funcionar criando uma lista aleatoria para o cacto 
     # Cria cactos espalhados em posições aleatórias do mapa
     for i in range(INITIAL_CACTOS):
-        cacto_x =   WIDTH / 1.08695652
+        cacto_x = WIDTH / 1.08695652 # Criar lista aleatoria para cacto
         cacto_y = HEIGHT / 1.47
         cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
         world_sprites.add(cacto)
@@ -242,13 +269,12 @@ def game_screen(screen):
         all_cactos.add(cacto)
     
     score = 0
-
     PLAYING = 0
     DONE = 1
-
+    pygame.mixer.music.play()
     state = PLAYING
-    while state != DONE:
-
+    while state != DONE or state != 1:
+        
         # Ajusta a velocidade do jogo.
         clock.tick(FPS)
 
@@ -257,7 +283,6 @@ def game_screen(screen):
             # Verifica se foi fechado.
             if event.type == pygame.QUIT:
                 state = DONE
-            print(event)
             # Verifica se soltou alguma tecla.
             if event.type == pygame.KEYDOWN:
                 # Dependendo da tecla, altera o estado do jogador.
@@ -269,17 +294,17 @@ def game_screen(screen):
         all_sprites.update()
         # Adiciona pontos ao score
         score += 10
-        # Verifica se houve colisão entre nave e meteoro
+        # Verifica se houve colisão entre jogador e cacto
         hits = pygame.sprite.spritecollide(player, all_cactos, True)
         if len(hits) > 0:
-            state = DONE
+            state = game_over_screen(screen, assets[GAME_OVER_IMG])
 
         # Verifica se algum cacto saiu da janela
         for cacto in world_sprites:
             if cacto.rect.right < 0:
                 # Destrói o cacto e cria um novo no final da tela
                 cacto.kill()
-                cacto_x =   WIDTH / 1.08695652
+                cacto_x =   WIDTH / 1.08695652 # Criar lista aleatoria para o cacto
                 cacto_y = HEIGHT / 1.47
                 new_cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
                 all_sprites.add(new_cacto)
@@ -316,11 +341,6 @@ def game_screen(screen):
 
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
-
-
-# Inicialização do Pygame.
-pygame.init()
-pygame.mixer.init()
 
 # Tamanho da tela.
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
