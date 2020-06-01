@@ -51,7 +51,7 @@ FALLING = 2
 # Define a velocidade inicial do mundo
 world_speed = -10
 # Define a quantidade inicial de cactos
-INITIAL_CACTOS = 1
+INITIAL_CACTOS = 2
 
 # Carrega todos os assets de uma vez.
 def load_assets(img_dir):
@@ -260,7 +260,7 @@ def game_screen(screen):
 
     # Cria cactos espalhados em posições aleatórias do mapa
     for i in range(INITIAL_CACTOS):
-        cacto_x = WIDTH / 1.08695652 # Criar lista aleatoria para cacto
+        cacto_x = random.randint(800, 1400)
         cacto_y = HEIGHT / 1.47
         cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
         world_sprites.add(cacto)
@@ -304,9 +304,15 @@ def game_screen(screen):
             if cacto.rect.right < 0:
                 # Destrói o cacto e cria um novo no final da tela
                 cacto.kill()
-                cacto_x =   WIDTH / 1.08695652 # Criar lista aleatoria para o cacto
-                cacto_y = HEIGHT / 1.47
-                new_cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
+                OK = False
+                while not OK:
+                    cacto_x = random.randint (1000, 2000) 
+                    cacto_y = HEIGHT / 1.47
+                    new_cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
+                    OK = True
+                    for cacto in all_cactos:
+                        if abs(cacto.rect.centerx - cacto_x) < 100:
+                            OK = False               
                 all_sprites.add(new_cacto)
                 world_sprites.add(new_cacto)
                 all_cactos.add(new_cacto)
