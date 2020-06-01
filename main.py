@@ -57,10 +57,10 @@ INITIAL_CACTOS = 1
 def load_assets(img_dir):
     assets = {}
     assets[PLAYER_IMG] = pygame.image.load(path.join(img_dir, PLAYER_IMG)).convert_alpha()
-    assets[BACKGROUND_IMG] = pygame.image.load(path.join(img_dir, BACKGROUND_IMG)).convert()
-    assets[CACTOS_IMG] = pygame.image.load(path.join(img_dir, CACTOS_IMG)).convert()
+    assets[BACKGROUND_IMG] = pygame.image.load(path.join(img_dir, BACKGROUND_IMG)).convert_alpha()
+    assets[CACTOS_IMG] = pygame.image.load(path.join(img_dir, CACTOS_IMG)).convert_alpha()
     assets[SCORE_FONT] = pygame.font.Font(SCORE_FONT, 28)
-    assets[GAME_OVER_IMG] = pygame.image.load(path.join(img_dir, GAME_OVER_IMG)).convert()
+    assets[GAME_OVER_IMG] = pygame.image.load(path.join(img_dir, GAME_OVER_IMG)).convert_alpha()
 
     return assets
 
@@ -82,7 +82,7 @@ def load_spritesheet(spritesheet, rows, columns):
             dest_rect = pygame.Rect(x, y, sprite_width, sprite_height)
 
             # Cria uma imagem vazia do tamanho do sprite
-            image = pygame.Surface((sprite_width, sprite_height))
+            image = pygame.Surface((sprite_width, sprite_height),pygame.SRCALPHA)
             # Copia o sprite atual (do spritesheet) na imagem
             image.blit(spritesheet, (0, 0), dest_rect)
             sprites.append(image)
