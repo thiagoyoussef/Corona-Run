@@ -21,6 +21,8 @@ BACKGROUND_IMG = 'full_background.png'
 CACTOS_IMG = 'cactos.png'
 SCORE_FONT = 'PressStart2P.ttf'
 GAME_OVER_IMG = 'game_over.png'
+BLOCK_IMG = 'block_img.png'
+
 
 # Carrega som do jogo
 pygame.mixer.music.load('sounds/mario_music.ogg')
@@ -50,6 +52,11 @@ FALLING = 2
 
 # Define a velocidade inicial do mundo
 world_speed = -10
+
+# Outras constantes
+INITIAL_BLOCKS = 6
+TILE_SIZE = 40
+
 # Define a quantidade inicial de cactos
 INITIAL_CACTOS = 2
 
@@ -61,6 +68,7 @@ def load_assets(img_dir):
     assets[CACTOS_IMG] = pygame.image.load(path.join(img_dir, CACTOS_IMG)).convert_alpha()
     assets[SCORE_FONT] = pygame.font.Font(SCORE_FONT, 28)
     assets[GAME_OVER_IMG] = pygame.image.load(path.join(img_dir, GAME_OVER_IMG)).convert_alpha()
+    assets[BLOCK_IMG] = pygame.image.load(path.join(img_dir, BLOCK_IMG)).convert_alpha()
 
     return assets
 
@@ -112,7 +120,7 @@ def game_over_screen(screen, game_over_img):
 class Player(pygame.sprite.Sprite):
 
     # Construtor da classe.
-    def __init__(self, player_img):
+    def __init__(self, player_img, blocks):
 
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -141,6 +149,9 @@ class Player(pygame.sprite.Sprite):
 
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
+
+        # Guarda o grupo de blocos para tratar as colisões
+        self.blocks = blocks
 
         # Começa no centro da janela
         self.rect.centerx = WIDTH / 10
@@ -171,6 +182,7 @@ class Player(pygame.sprite.Sprite):
         if self.speedy > 0:
             self.state = FALLING
         self.rect.y += self.speedy
+
 
         # Se bater no chão, para de cair
         if self.rect.bottom > GROUND:
@@ -212,6 +224,31 @@ class Player(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.center = center
 
+# Class que representa os blocos do cenário
+class Tile(pygame.sprite.Sprite):
+
+    # Construtor da classe.
+    def __init__(self, tile_img, x, y, speedx):
+        # Construtor da classe pai (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        # Aumenta o tamanho do tile.
+        tile_img = pygame.transform.scale(tile_img, (TILE_SIZE, TILE_SIZE))
+
+        # Define a imagem do tile.
+        self.image = tile_img
+        # Detalhes sobre o posicionamento.
+        self.rect = self.image.get_rect()
+
+        # Posiciona o tile
+        self.rect.x = x
+        self.rect.y = y
+
+        self.speedx = speedx
+
+    def update(self):
+        self.rect.x += self.speedx
+
 
 # Classe que reprenta os cactos
 class Cactos(pygame.sprite.Sprite):
@@ -236,21 +273,31 @@ def game_screen(screen):
 
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
+
     # Carrega assets
     assets = load_assets(img_dir)
 
+    # Cria um grupo de todos os sprites e adiciona o jogador.
+    all_sprites = pygame.sprite.Group()
+
+    # Cria um grupo somente com os sprites de bloco.
+    # Sprites de block são aqueles que impedem o movimento do jogador
+    blocks = pygame.sprite.Group()
+
+    # Cria Sprite do jogador
+    player = Player(assets[PLAYER_IMG], blocks)
+
     # Carrega o fundo do jogo
     background = assets[BACKGROUND_IMG]
+
+    # Adiciona o jogador no grupo de sprites
+    all_sprites.add(player)
+
     # Redimensiona o fundo
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     background_rect = background.get_rect()
 
-    # Cria Sprite do jogador
-    player = Player(assets[PLAYER_IMG])
-    # Cria um grupo de todos os sprites e adiciona o jogador.
-    all_sprites = pygame.sprite.Group()
-    all_sprites.add(player)
-    
+
     # Cria um grupo para guardar somente os sprites do mundo (obstáculos, objetos, etc).
     # Esses sprites vão andar junto com o mundo (fundo)
     world_sprites = pygame.sprite.Group()
@@ -267,6 +314,16 @@ def game_screen(screen):
         # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
         all_sprites.add(cacto)
         all_cactos.add(cacto)
+
+    # Cria blocos espalhados em posições aleatórias do mapa
+    for i in range(INITIAL_BLOCKS):
+        block_x = random.randint(0, WIDTH)
+        block_y = random.randint(0, int(HEIGHT * 0.5))
+        block = Tile(assets[BLOCK_IMG], block_x, block_y, world_speed)
+        world_sprites.add(block)
+        # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
+        all_sprites.add(block)
+
     
     score = 0
     PLAYING = 0
@@ -316,6 +373,18 @@ def game_screen(screen):
                 all_sprites.add(new_cacto)
                 world_sprites.add(new_cacto)
                 all_cactos.add(new_cacto)
+
+        # Verifica se algum bloco saiu da janela
+        for block in world_sprites:
+            if block.rect.right < 0:
+                # Destrói o bloco e cria um novo no final da tela
+                block.kill()
+                block_x = random.randint(WIDTH, int(WIDTH * 1.5))
+                block_y = random.randint(0, int(HEIGHT * 0.5))
+                new_block = Tile(assets[BLOCK_IMG], block_x, block_y, world_speed)
+                all_sprites.add(new_block)
+                world_sprites.add(new_block)
+
 
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
