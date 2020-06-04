@@ -58,7 +58,7 @@ INITIAL_BLOCKS = 6
 TILE_SIZE = 40
 
 # Define a quantidade inicial de cactos
-INITIAL_CACTOS = 2
+INITIAL_CACTOS = 2 
 
 # Carrega todos os assets de uma vez.
 def load_assets(img_dir):
@@ -71,7 +71,6 @@ def load_assets(img_dir):
     assets[BLOCK_IMG] = pygame.image.load(path.join(img_dir, BLOCK_IMG)).convert_alpha()
 
     return assets
-
 
 # Animacoes quando o personagem anda
 def load_spritesheet(spritesheet, rows, columns):
@@ -249,7 +248,6 @@ class Tile(pygame.sprite.Sprite):
     def update(self):
         self.rect.x += self.speedx
 
-
 # Classe que reprenta os cactos
 class Cactos(pygame.sprite.Sprite):
     def __init__(self, cactos_img, x, y, speedx):
@@ -297,10 +295,9 @@ def game_screen(screen):
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     background_rect = background.get_rect()
 
-
     # Cria um grupo para guardar somente os sprites do mundo (obstáculos, objetos, etc).
     # Esses sprites vão andar junto com o mundo (fundo)
-    world_sprites = pygame.sprite.Group()
+    all_blocks = pygame.sprite.Group()
     
     # Cria um grupo para os cactos
     all_cactos = pygame.sprite.Group()
@@ -310,7 +307,7 @@ def game_screen(screen):
         cacto_x = random.randint(800, 1400)
         cacto_y = HEIGHT / 1.47
         cacto = Cactos(assets[CACTOS_IMG], cacto_x, cacto_y, world_speed)
-        world_sprites.add(cacto)
+        all_blocks.add(cacto)
         # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
         all_sprites.add(cacto)
         all_cactos.add(cacto)
@@ -320,10 +317,9 @@ def game_screen(screen):
         block_x = random.randint(0, WIDTH)
         block_y = random.randint(0, int(HEIGHT * 0.5))
         block = Tile(assets[BLOCK_IMG], block_x, block_y, world_speed)
-        world_sprites.add(block)
+        all_blocks.add(block)
         # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
         all_sprites.add(block)
-
     
     score = 0
     PLAYING = 0
@@ -357,7 +353,7 @@ def game_screen(screen):
             state = game_over_screen(screen, assets[GAME_OVER_IMG])
 
         # Verifica se algum cacto saiu da janela
-        for cacto in world_sprites:
+        for cacto in all_cactos:
             if cacto.rect.right < 0:
                 # Destrói o cacto e cria um novo no final da tela
                 cacto.kill()
@@ -371,11 +367,11 @@ def game_screen(screen):
                         if abs(cacto.rect.centerx - cacto_x) < 100:
                             OK = False               
                 all_sprites.add(new_cacto)
-                world_sprites.add(new_cacto)
+                all_blocks.add(new_cacto)
                 all_cactos.add(new_cacto)
 
         # Verifica se algum bloco saiu da janela
-        for block in world_sprites:
+        for block in all_blocks:
             if block.rect.right < 0:
                 # Destrói o bloco e cria um novo no final da tela
                 block.kill()
@@ -383,7 +379,7 @@ def game_screen(screen):
                 block_y = random.randint(0, int(HEIGHT * 0.5))
                 new_block = Tile(assets[BLOCK_IMG], block_x, block_y, world_speed)
                 all_sprites.add(new_block)
-                world_sprites.add(new_block)
+                all_blocks.add(new_block)
 
 
         # A cada loop, redesenha o fundo e os sprites
