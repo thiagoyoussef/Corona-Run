@@ -40,8 +40,9 @@ YELLOW = (255, 255, 0)
 GRAVITY = 2
 
 # Define dois tipos de pulo
-NORMAL_JUMP = 30
-MEGA_JUMP = 45
+JUMP = 30
+MEGA_JUMP_1 = 4
+MEGA_JUMP_2 = 10
 
 # Define a altura do chão
 GROUND = HEIGHT / 1.183
@@ -60,7 +61,7 @@ INITIAL_CACTOS = 2 # Cactos
 INITIAL_BLOCKS = 6 # Blocks
 
 # Outras constantes
-TILE_SIZE = 70
+TILE_SIZE = 50
 BOSS_SIZE = 175
 
 # Carrega todos os assets de uma vez.
@@ -163,6 +164,8 @@ class Player(pygame.sprite.Sprite):
         self.animations = {
             STILL: spritesheet[2:4],
             JUMPING: spritesheet[2:3],
+            MEGA_JUMP_1: spritesheet[2:3],
+            MEGA_JUMP_2: spritesheet[2:3],
             FALLING: spritesheet[3:4],
         }
         
@@ -193,11 +196,20 @@ class Player(pygame.sprite.Sprite):
         self.frame_ticks = 75
 
     # Método que faz o personagem pular
-    def jump(self, JUMP_TYPE):
+    def jump(self):
         # Só pode pular se ainda não estiver pulando ou caindo
         if self.state == STILL:
-            self.speedy -= JUMP_TYPE
+            self.speedy -= JUMP
             self.state = JUMPING
+        # tipos de MEGA JUMP;
+        elif self.state == JUMPING: 
+            self.speedy -= JUMP
+            self.state = MEGA_JUMP_1 
+        elif self.state == FALLING:
+            self.speedy -= JUMP
+            self.state = MEGA_JUMP_2
+
+
 
     # Metodo que atualiza a posição do personagem
     def update(self):
@@ -224,7 +236,7 @@ class Player(pygame.sprite.Sprite):
         # Verifica quantos ticks se passaram desde a ultima mudança de frame.
         elapsed_ticks = now - self.last_update
 
-        # Se já está na hora de mudar de imagem...
+        # Se já está na hora de  mudar de imagem...
         if elapsed_ticks > self.frame_ticks:
 
             # Marca o tick da nova imagem.
@@ -388,14 +400,27 @@ def game_screen(screen):
     
     # Cria blocos espalhados em posições aleatórias do mapa
     for i in range(INITIAL_BLOCKS):
-        block_x = random.randint(0, WIDTH)
-        block_y = random.randint(0, int(HEIGHT * 0.5))
+        block_x = random.randint(400, WIDTH)
+        block_y = random.choice([120 ,200])
         block = Tile(assets, block_x, block_y, world_speed)
         
         # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
         all_sprites.add(block)
         all_blocks.add(block)
-    
+        
+        #tamanho da sequencia de blocos
+        t_block = random.choice([2,3])
+        last_block = block_x
+        for n in range(t_block):
+            last_block = last_block + TILE_SIZE
+            block = Tile(assets, last_block, block_y, world_speed)
+        
+            # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
+            all_sprites.add(block)
+            all_blocks.add(block)
+            
+        
+
     score = 0
     PLAYING = 0
     DONE = 1
@@ -426,9 +451,7 @@ def game_screen(screen):
             if event.type == pygame.KEYDOWN:
                 # Dependendo da tecla, altera o estado do jogador.
                 if event.key == pygame.K_SPACE:
-                    player.jump(NORMAL_JUMP)
-                if event.key == pygame.K_UP:
-                    player.jump(MEGA_JUMP)
+                    player.jump()
 
         # Atualiza a ação de todos os sprites
         all_sprites.update()
@@ -470,12 +493,23 @@ def game_screen(screen):
                 # Destrói o bloco e cria um novo no final da tela
                 block.kill()
                 block_x = random.randint(WIDTH, int(WIDTH * 1.5))
-                block_y = random.randint(0, int(HEIGHT * 0.5))
+                block_y = random.choice([120, 200])
                 new_block = Tile(assets, block_x, block_y, world_speed)
 
                 # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
                 all_sprites.add(new_block)
                 all_blocks.add(new_block)
+
+                #tamanho da sequencia de blocos
+                t_block = random.choice([2,3])
+                last_block = block_x
+                for n in range(t_block):
+                    last_block = last_block + TILE_SIZE
+                    new_block = Tile(assets, last_block, block_y, world_speed)
+        
+                    # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
+                    all_sprites.add(new_block)
+                    all_blocks.add(new_block)
 
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
