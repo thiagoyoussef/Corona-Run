@@ -1,11 +1,14 @@
+'''
+Arquivo com todos os parâmetros que
+será utilizado nas classes e funções
+'''
+
 from os import path
 import pygame
 
 # Estabelece a pasta que contem as figuras e sons.
 img_dir = path.join(path.dirname(__file__), 'img')
-
-pygame.init()
-pygame.mixer.init()
+sound_dir = path.join(path.dirname(__file__), 'sounds')
 
 # Dados gerais do jogo.
 TITULO = 'Corona Run'
@@ -20,11 +23,6 @@ SCORE_FONT = 'PressStart2P.ttf'
 GAME_OVER_IMG = 'game_over.png'
 PUKE_IMG = 'puke.png'
 BLOCK_IMG = 'block_img.png'
-
-
-# Carrega som do jogo
-pygame.mixer.music.load('sounds/mario_music.ogg')
-pygame.mixer.music.set_volume(0.2)
 
 # Define algumas variáveis com as cores básicas
 WHITE = (255, 255, 255)
@@ -52,11 +50,11 @@ FALLING = 2
 DEATH = 3
 
 # Define a velocidade inicial do mundo
-world_speed = -10
+world_speed = -7
 
 # Define a quantidade inicial de:
 INITIAL_CACTOS = 2 # Cactos
-INITIAL_BLOCKS = 6 # Blocks
+INITIAL_BLOCKS = 4 # Blocks
 
 # Outras constantes
 TILE_SIZE = 50
