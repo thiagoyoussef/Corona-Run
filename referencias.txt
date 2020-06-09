@@ -9,3 +9,5 @@ https://elgoog.im/t-rex/
 https://itch.io/
 https://blog.felgo.com/game-resources/free-music-for-games# 
 https://mfgg.net/index.php?sess=c98c08d45fddf3da710f0ff2202dc91b&act=resdb&param=02&c=5&id=35008
+https://github.com/kidscancode/pygame_tutorials
+https://www.piskelapp.com/

@@ -7,7 +7,7 @@ import pygame
 import random
 import time
 from parameters import WIDTH, HEIGHT, TITULO
-from game_loop import game_screen 
+from game_loop import game_screen
 
 pygame.init()
 pygame.mixer.init()

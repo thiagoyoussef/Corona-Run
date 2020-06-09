@@ -7,7 +7,8 @@ import random
 from parameters import *
 from assets import *
 from sprites import *
-from functions import *
+from functions import * 
+from main import *
 
 # Função principal do jogo
 def game_screen(screen):
@@ -40,7 +41,6 @@ def game_screen(screen):
     # Cria Sprite do jogador e adiciona ao grupo
     player = Player(assets, groups)
     all_sprites.add(player) 
-  
     # Cria cactos espalhados em posições aleatórias do mapa
     for i in range(INITIAL_CACTOS):
         cacto_x = random.randint(800, 1400)
@@ -60,13 +60,17 @@ def game_screen(screen):
         all_blocks.add(block)
 
     score = 0
-    PLAYING = 0
-    DONE = 1
-    state = PLAYING
+    game_state = 5
     pygame.mixer.music.play()
 
+    # Mostra a tela inicial
+    if game_state == START or 5:
+        running = True
+        while running:
+            running = start_screen(screen)
+
     # While principal
-    while state != DONE or state != 1:
+    while game_state == PLAYING or 6:
         
         # Ajusta a velocidade do jogo.
         clock.tick(FPS)
@@ -84,7 +88,8 @@ def game_screen(screen):
         for event in pygame.event.get():
             # Verifica se foi fechado.
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                state = DONE
+                game_state = DONE
+                pygame.quit()
             # Verifica se soltou alguma tecla.
             if event.type == pygame.KEYDOWN:
                 # Dependendo da tecla, altera o estado do jogador.
@@ -100,8 +105,8 @@ def game_screen(screen):
         # Verifica se houve colisão entre jogador e cacto
         hits = pygame.sprite.spritecollide(player, all_cactos, True)
         if len(hits) > 0:
+            game_state == ENDGAME 
             state = game_over_screen(screen, assets)
-
         # Verifica se algum cacto saiu da janela
         for cacto in all_cactos:
             if cacto.rect.right < 0:
@@ -177,3 +182,5 @@ def game_screen(screen):
 
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
+    
+    

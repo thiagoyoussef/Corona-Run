@@ -43,6 +43,12 @@ MEGA_JUMP_2 = 10
 # Define a altura do chão
 GROUND = HEIGHT / 1.183
 
+# Define estados possíveis do jogo
+START = 5
+PLAYING = 6
+ENDGAME = 7
+DONE = 8
+
 # Define estados possíveis do jogador
 STILL = 0
 JUMPING = 1
