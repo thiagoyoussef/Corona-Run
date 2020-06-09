@@ -36,8 +36,8 @@ YELLOW = (255, 255, 0)
 GRAVITY = 2
 
 # Define dois tipos de pulo
-JUMP = 30
-MEGA_JUMP_1 = 4
+JUMP = 26
+MEGA_JUMP_1 = 5
 MEGA_JUMP_2 = 10
 
 # Define a altura do chão

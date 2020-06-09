@@ -89,19 +89,28 @@ class Player(pygame.sprite.Sprite):
         # Variável que contem a altura maxima do jogador antes de cair
         self.highest_y = self.rect.bottom
 
+        # Contador de pulos
+        self.jumps = 0
+
     # Método que faz o personagem pular
     def jump(self):
-        # Só pode pular se ainda não estiver pulando ou caindo
-        if self.state == STILL:
-            self.speedy -= JUMP
-            self.state = JUMPING
-        # tipos de MEGA JUMP;
-        elif self.state == JUMPING: 
-            self.speedy -= JUMP
-            self.state = MEGA_JUMP_1 
-        elif self.state == FALLING:
-            self.speedy -= JUMP
-            self.state = MEGA_JUMP_2
+        if self.jumps < 2:
+            # Só pode pular se ainda não estiver pulando ou caindo
+            if self.state == STILL:
+                self.speedy -= JUMP
+                self.jumps += 1
+                self.state = JUMPING
+            # tipos de MEGA JUMP;
+            elif self.state == JUMPING: 
+                self.speedy -= JUMP
+                self.jumps += 1
+                self.state = MEGA_JUMP_1 
+            elif self.state == FALLING:
+                self.speedy -= JUMP
+                self.jumps += 1
+                self.state = MEGA_JUMP_2
+        else:
+            self.jumps += 0
 
     # Metodo que atualiza a posição do personagem
     def update(self):
@@ -114,6 +123,8 @@ class Player(pygame.sprite.Sprite):
 
         # Se bater no chão, para de cair
         if self.rect.bottom > GROUND:
+            # Reinicia o contador de pulo
+            self.jumps = 0
             # Reposiciona para a posição do chão
             self.rect.bottom = GROUND
             # Para de cair
@@ -138,6 +149,10 @@ class Player(pygame.sprite.Sprite):
                     
                     # Atualiza o estado para parado
                     self.state = STILL
+
+                    # Reinicia o contador de pulo
+                    self.jumps = 0
+
 
         # Update de movimentacao 
         # Verifica o tick atual.
