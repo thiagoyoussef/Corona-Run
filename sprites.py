@@ -274,7 +274,7 @@ class Boss(pygame.sprite.Sprite):
 
         # Só será possível atirar uma vez a cada 500 milissegundos
         self.last_shot = pygame.time.get_ticks()
-        self.shoot_ticks = 500
+        self.shoot_ticks = 2000
 
         # Estabelece vida
         self.health = 200

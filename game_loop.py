@@ -71,7 +71,7 @@ def game_screen(screen):
 
   # Mostra a tela inicial
     if game_state == 'start':
-        start_screen(screen)
+        start_screen(screen,assets)
 
     game_state = 'playing'
 
@@ -91,7 +91,7 @@ def game_screen(screen):
                 # Dependendo da tecla, altera o estado do jogador.
                 if event.key == pygame.K_SPACE:
                     player.jump()
-                if event.key == pygame.K_RIGHT and score >= boss_appears:
+                if event.key == pygame.K_d and score >= boss_appears:
                     player.shoot()
 
         # Atualiza a ação de todos os sprites
@@ -103,7 +103,7 @@ def game_screen(screen):
         # Verifica se houve colisão entre jogador e cacto
         hits = pygame.sprite.spritecollide(player, all_cactos, True,  pygame.sprite.collide_mask)
         if len(hits) > 0:
-            player.health -= 10
+            player.health -= 50
             OK = False
             while not OK:
                 cacto_x = random.randint (1000, 2000) 
@@ -197,7 +197,7 @@ def game_screen(screen):
             all_sprites.add(boss)
         
         # Junto com o boss inicia o disparo de puke
-        if score >= boss_appears:
+        if score >= boss_appears and boss.health > 0:
             boss.puke()
             boss.life(screen)
             

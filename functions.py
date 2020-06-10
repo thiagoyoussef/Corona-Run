@@ -31,17 +31,15 @@ def load_spritesheet(spritesheet, rows, columns):
     return sprites
 
 # Função que adiciona a tela de start
-def start_screen(screen):
-    screen.fill(BLACK)
+def start_screen(screen, assets):
+    home_screen_img = pygame.transform.scale(assets[HOME_SCREEN], (int(WIDTH) , int(HEIGHT)))
+    background_rect = home_screen_img.get_rect()
+    screen.blit(home_screen_img, background_rect)
     font1 = pygame.font.SysFont("comicsansms", 48)
     font2 = pygame.font.SysFont("comicsansms", 24)
-    text = font1.render('CORONA RUN', True, GREEN) 
-    screen.blit(text, [WIDTH//8 + 200, HEIGHT//4])
-    text = font1.render('BY: LUCA, THIAGO AND VITOR', True, GREEN) 
-    screen.blit(text, [WIDTH//8 + 30, HEIGHT//4+80])
-    text = font2.render('PRESS 1xSPACE TO JUMP, 2xSPACE TO MEGAJUMP, AND RIGHT TO SHOOT', True, GREEN) 
-    screen.blit(text, [WIDTH//8-75, HEIGHT//2])
-    text = font2.render('Press any key to start', True, GREEN)  
+    text = font2.render('START', True, GREEN)  
+    screen.blit(text, [WIDTH//8 + 220, HEIGHT*3/4])
+    text = font2.render('QUIT', True, GREEN)
     screen.blit(text, [WIDTH//8 + 220, HEIGHT*3/4])
     pygame.display.flip()
     pygame.display.update()
@@ -56,6 +54,7 @@ def start_screen(screen):
 
 # Função que adiciona a tela de game over
 def game_over_screen(screen, assets):
+
 
     # Redimensiona o tamanho da imagem
     game_over_img = pygame.transform.scale(assets[GAME_OVER_IMG], (int(WIDTH/2.114) , int(HEIGHT/2.4)))

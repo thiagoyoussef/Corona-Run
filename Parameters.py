@@ -26,6 +26,20 @@ GAME_OVER_IMG = 'game_over.png'
 PUKE_IMG = 'puke.png'
 BLOCK_IMG = 'block_img.png'
 BULLET_IMG = 'balinha.png'
+HOME_SCREEN = 'home_screen1.png'
+JUMP_SOUND = 'jump.wav'
+DIE_SOUND = 'die.wav'
+BACKINBLACK_SOUND = 'backinblack.ogg'
+BACKINBLACK2_SOUND = 'backinblack2.ogg'
+CHECKPOINT_SOUND = 'checkPoint.ogg'
+COINSOUND_SOUND = 'coinsound.ogg'
+COUNTDOWN_SOUND = 'countdown.ogg'
+EXPL3_SOUND = 'expl3.ogg'
+EXPL6_SOUND = 'expl6.ogg'
+FINALE_SOUND = 'finale.ogg'
+PEW_SOUND = 'pew.ogg'
+WINDSFX3_SOUND = 'windsfx3.ogg'
+
 
 # Define algumas variáveis com as cores básicas
 WHITE = (255, 255, 255)
