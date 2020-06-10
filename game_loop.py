@@ -65,9 +65,16 @@ def game_screen(screen):
     state = PLAYING
     pygame.mixer.music.play()
 
+    game_state = 'start'
+
+  # Mostra a tela inicial
+    if game_state == 'start':
+        start_screen(screen)
+
+    game_state = 'playing'
     # While principal
-    while state != DONE or state != 1:
-        
+    while game_state == 'playing':
+
         # Ajusta a velocidade do jogo.
         clock.tick(FPS)
 
@@ -84,7 +91,7 @@ def game_screen(screen):
         for event in pygame.event.get():
             # Verifica se foi fechado.
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                state = DONE
+                game_state = 'done'
             # Verifica se soltou alguma tecla.
             if event.type == pygame.KEYDOWN:
                 # Dependendo da tecla, altera o estado do jogador.
@@ -100,7 +107,7 @@ def game_screen(screen):
         # Verifica se houve colisão entre jogador e cacto
         hits = pygame.sprite.spritecollide(player, all_cactos, True)
         if len(hits) > 0:
-            state = game_over_screen(screen, assets)
+            game_state = game_over_screen(screen, assets)
 
         # Verifica se algum cacto saiu da janela
         for cacto in all_cactos:

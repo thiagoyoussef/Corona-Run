@@ -30,7 +30,33 @@ def load_spritesheet(spritesheet, rows, columns):
             sprites.append(image)
     return sprites
 
-# Funcao que adiciona tela de game over
+# Função que adiciona a tela de start
+def start_screen(screen):
+    screen.fill(BLACK)
+    font1 = pygame.font.SysFont("comicsansms", 48)
+    font2 = pygame.font.SysFont("comicsansms", 24)
+    
+    text = font1.render('CORONA RUN', True, GREEN) 
+    screen.blit(text, [WIDTH//8, HEIGHT//4])
+
+    text = font2.render('PRESS SPACE TO JUMP AND DOUBLE SPACE TO MEGAJUMP', True, GREEN) 
+    screen.blit(text, [WIDTH//8, HEIGHT//2])
+
+    text = font2.render('Press any key to start', True, GREEN)  
+    screen.blit(text, [WIDTH//8, HEIGHT*3/4])
+
+    pygame.display.flip()
+    pygame.display.update()
+    while True:
+        for event in pygame.event.get():
+        # Verifica se o jogo foi fechado.
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                return False
+            # Verifica se apertou alguma tecla.
+            if event.type == pygame.KEYUP:
+                return False
+
+# Função que adiciona a tela de game over
 def game_over_screen(screen, assets):
 
     # Redimensiona o tamanho da imagem
@@ -49,4 +75,4 @@ def game_over_screen(screen, assets):
     # Pausa o jogo na tela de game over
     time.sleep(1)
     
-    return 1
+    return 'endgame'
