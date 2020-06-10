@@ -7,7 +7,7 @@ import pygame
 from parameters import *
 import time
 
-# Animações de quando o personagem anda
+# Animacoes quando o personagem anda
 def load_spritesheet(spritesheet, rows, columns):
     # Calcula a largura e altura de cada sprite.
     sprite_width = spritesheet.get_width() // columns
@@ -30,30 +30,7 @@ def load_spritesheet(spritesheet, rows, columns):
             sprites.append(image)
     return sprites
 
-# Função que adiciona a tela de start
-def start_screen(screen):
-    screen.fill(BLACK)
-    screen.draw_text("CORONA RUN", screen.title_font, 100, RED,
-                    WIDTH / 2, HEIGHT / 4, align="center")
-    screen.draw_text("PRESS SPACE TO JUMP AND DOUBLE SPACE TO MEGAJUMP", screen.title_font, 75, WHITE,
-                    WIDTH / 2, HEIGHT * 2, align="center")
-    screen.draw_text("Press any key to start", screen.title_font, 75, WHITE,
-                    WIDTH / 2, HEIGHT * 3 / 4, align="center")
-    pygame.display.flip()
-    pygame.display.update()
-    for event in pygame.event.get():
-    # Verifica se o jogo foi fechado.
-        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-            state = DONE
-            running = False
-            return running
-        # Verifica se soltou alguma tecla.
-        if event.type == pygame.KEYUP:
-            state = PLAYING
-            running = False
-            return running
-
-# Função que adiciona tela de game over
+# Funcao que adiciona tela de game over
 def game_over_screen(screen, assets):
 
     # Redimensiona o tamanho da imagem
