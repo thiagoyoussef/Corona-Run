@@ -10,3 +10,7 @@ https://itch.io/
 https://blog.felgo.com/game-resources/free-music-for-games# 
 https://mfgg.net/index.php?sess=c98c08d45fddf3da710f0ff2202dc91b&act=resdb&param=02&c=5&id=35008
 https://www.piskelapp.com/
+https://github.com/delattre1/projeto_final_desoft
+https://github.com/DiegoSaragozaSilva/MinecraftInPython-DesSoft-2019.2.git
+https://github.com/GabrielKabbani/Projeto_Final_DesSoft.git
+https://github.com/lucasfontenla/TugWar_Game

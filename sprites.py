@@ -35,6 +35,35 @@ class Tile(pygame.sprite.Sprite):
     def update(self):
         self.rect.x += self.speedx
 
+# Classe Bullet que representa os tiros
+class Bullet(pygame.sprite.Sprite):
+    
+    # Construtor da classe.
+    def __init__(self, assets, right, centery):
+        
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        # Diminui o tamanho do tiro.
+        bullet_img = pygame.transform.scale(assets[BULLET_IMG], (BULLET_SIZE, BULLET_SIZE))
+        self.image = bullet_img
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
+
+        # Coloca no lugar inicial definido em x, y do constutor
+        self.rect.centery = centery
+        self.rect.right = right
+        self.speedx = 10  # Velocidade fixa para direita
+
+    def update(self):
+        
+        # A bala só se move no eixo x
+        self.rect.x += self.speedx
+
+        # Se o tiro passar do inicio da tela, morre.
+        if self.rect.right < 0:
+            self.kill()
+
 # Classe Jogador que representa o herói
 class Player(pygame.sprite.Sprite):
 
@@ -43,6 +72,9 @@ class Player(pygame.sprite.Sprite):
 
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
+
+        self.groups = groups
+        self.assets = assets
 
         # Aumenta o tamanho da imagem
         player_img = pygame.transform.scale(assets[PLAYER_IMG], (250, 100))
@@ -83,6 +115,10 @@ class Player(pygame.sprite.Sprite):
         # Guarda o tick da primeira imagem
         self.last_update = pygame.time.get_ticks()
 
+        # Só será possível atirar uma vez a cada 400 milissegundos
+        self.last_shot = pygame.time.get_ticks()
+        self.shoot_ticks = 400
+
         # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
         self.frame_ticks = 75
 
@@ -92,25 +128,8 @@ class Player(pygame.sprite.Sprite):
         # Contador de pulos
         self.jumps = 0
 
-    # Método que faz o personagem pular
-    def jump(self):
-        if self.jumps < 2:
-            # Só pode pular se ainda não estiver pulando ou caindo
-            if self.state == STILL:
-                self.speedy -= JUMP
-                self.jumps += 1
-                self.state = JUMPING
-            # tipos de MEGA JUMP;
-            elif self.state == JUMPING: 
-                self.speedy -= JUMP
-                self.jumps += 1
-                self.state = MEGA_JUMP_1 
-            elif self.state == FALLING:
-                self.speedy -= JUMP
-                self.jumps += 1
-                self.state = MEGA_JUMP_2
-        else:
-            self.jumps += 0
+        # Estabelece vida
+        self.health = 100
 
     # Metodo que atualiza a posição do personagem
     def update(self):
@@ -132,6 +151,10 @@ class Player(pygame.sprite.Sprite):
             # Atualiza o estado para parado
             self.state = STILL
 
+        # Atualiza a altura no mapa
+        if self.state != FALLING:
+            self.highest_y = self.rect.bottom
+            
         # Verifica se colidiu com o bloco caso o jogador esteja caindo
         if self.speedy > 0:  # Está indo para baixo
             collisions = pygame.sprite.spritecollide(self, self.blocks, False)
@@ -152,7 +175,6 @@ class Player(pygame.sprite.Sprite):
 
                     # Reinicia o contador de pulo
                     self.jumps = 0
-
 
         # Update de movimentacao 
         # Verifica o tick atual.
@@ -185,6 +207,53 @@ class Player(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.center = center
 
+    # Método que faz o personagem pular
+    def jump(self):
+        if self.jumps < 2:
+            
+            # Só pode pular se ainda não estiver pulando ou caindo
+            if self.state == STILL:
+                self.speedy -= JUMP
+                self.jumps += 1
+                self.state = JUMPING
+           
+            # Tipos de MEGA JUMP;
+            elif self.state == JUMPING: 
+                self.speedy -= JUMP
+                self.jumps += 1
+                self.state = MEGA_JUMP_1 
+            elif self.state == FALLING:
+                self.speedy -= JUMP
+                self.jumps += 1
+                self.state = MEGA_JUMP_2
+        else:
+            self.jumps += 0
+
+    # Função que representa a vida do jogador
+    def life(self, screen):
+        pygame.draw.rect(screen, (255,0,0), (self.rect.x, self.rect.y - 60, 100,10))
+        if self.health >= 0:
+            pygame.draw.rect(screen, (0,255,0), (self.rect.x, self.rect.y - 60, 100 - (100 - self.health),10))
+
+    # Função que representa os tiros
+    def shoot(self):
+        
+        # Verifica se pode atirar
+        now = pygame.time.get_ticks()
+        
+        # Verifica quantos ticks se passaram desde o último tiro.
+        elapsed_ticks = now - self.last_shot
+
+        # Se já pode atirar novamente...
+        if elapsed_ticks > self.shoot_ticks:
+            # Marca o tick da nova imagem.
+            self.last_shot = now
+            
+            # O novo tiro vai ser criada logo a direita e no centro vertical do jogador
+            new_bullet = Bullet(self.assets, self.rect.right, self.rect.centery)
+            self.groups['all_sprites'].add(new_bullet)
+            self.groups['all_bullets'].add(new_bullet)
+
 # Classe que representa o boss
 class Boss(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
@@ -196,7 +265,7 @@ class Boss(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH - 100
-        self.rect.bottom = HEIGHT - 400
+        self.rect.bottom = HEIGHT - 360
         self.speedx = 0
         self.groups = groups
         self.assets = assets
@@ -204,6 +273,9 @@ class Boss(pygame.sprite.Sprite):
         # Só será possível atirar uma vez a cada 500 milissegundos
         self.last_shot = pygame.time.get_ticks()
         self.shoot_ticks = 500
+
+        # Estabelece vida
+        self.health = 200
 
     def update(self):
         
@@ -216,6 +288,7 @@ class Boss(pygame.sprite.Sprite):
             self.rect.left = 0
 
     def puke(self):
+
         # Verifica se pode disparar
         now = pygame.time.get_ticks()
         # Verifica quantos ticks se passaram desde o último disparo.
@@ -231,6 +304,11 @@ class Boss(pygame.sprite.Sprite):
             new_puke = Puke(self.assets, self.rect.left, self.rect.centery)
             self.groups['all_sprites'].add(new_puke)
             self.groups['all_puke'].add(new_puke)
+
+    def life(self, screen):
+        pygame.draw.rect(screen, (255,0,0), (self.rect.x , self.rect.y - 60, 200,10))
+        if self.health >= 0:
+            pygame.draw.rect(screen, (0,255,0), (self.rect.x, self.rect.y - 60, 200 - (200 - self.health),10))
 
 # Classe Puke que representa os disparos do boss
 class Puke(pygame.sprite.Sprite):

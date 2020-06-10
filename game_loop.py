@@ -29,6 +29,7 @@ def game_screen(screen):
     all_blocks = pygame.sprite.Group()
     all_cactos = pygame.sprite.Group()
     all_puke = pygame.sprite.Group()
+    all_bullets = pygame.sprite.Group()
 
     # Cria dicionário para adicionar todos os grupos
     groups = {}
@@ -36,6 +37,7 @@ def game_screen(screen):
     groups['all_blocks'] = all_blocks
     groups['all_cactos'] = all_cactos
     groups['all_puke'] = all_puke
+    groups['all_bullets'] = all_bullets
 
     # Cria Sprite do jogador e adiciona ao grupo
     player = Player(assets, groups)
@@ -72,20 +74,12 @@ def game_screen(screen):
         start_screen(screen)
 
     game_state = 'playing'
+
     # While principal
     while game_state == 'playing':
 
         # Ajusta a velocidade do jogo.
         clock.tick(FPS)
-
-        # Adiciona o boss após um certo score
-        if score == 3000:
-            boss = Boss(groups, assets)
-            all_sprites.add(boss)
-        
-        # Junto com o boss inicia o disparo de puke
-        if score >= 3000:
-            boss.puke()
         
         # Processa os eventos (mouse, teclado, botão, etc).
         for event in pygame.event.get():
@@ -97,6 +91,8 @@ def game_screen(screen):
                 # Dependendo da tecla, altera o estado do jogador.
                 if event.key == pygame.K_SPACE:
                     player.jump()
+                if event.key == pygame.K_RIGHT and score >= boss_appears:
+                    player.shoot()
 
         # Atualiza a ação de todos os sprites
         all_sprites.update()
@@ -107,7 +103,22 @@ def game_screen(screen):
         # Verifica se houve colisão entre jogador e cacto
         hits = pygame.sprite.spritecollide(player, all_cactos, True)
         if len(hits) > 0:
-            game_state = game_over_screen(screen, assets)
+            player.health -= 10
+            OK = False
+            while not OK:
+                cacto_x = random.randint (1000, 2000) 
+                cacto_y = HEIGHT / 1.47
+                new_cacto = Cactos(assets, cacto_x, cacto_y, world_speed)
+                OK = True
+                for cacto in all_cactos:
+                    if abs(cacto.rect.centerx - cacto_x) < 100:
+                        OK = False   
+            
+            # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados              
+            all_sprites.add(new_cacto)
+            all_cactos.add(new_cacto)
+            if player.health <= 0:
+                game_state = game_over_screen(screen, assets)
 
         # Verifica se algum cacto saiu da janela
         for cacto in all_cactos:
@@ -176,6 +187,33 @@ def game_screen(screen):
         # Desenha todos os sprites na tela
         all_sprites.draw(screen)
 
+        # Cria barra de vida
+        player.life(screen)
+
+         # Adiciona o boss após um certo score
+        if score == boss_appears:
+            boss = Boss(groups, assets)
+            all_sprites.add(boss)
+        
+        # Junto com o boss inicia o disparo de puke
+        if score >= boss_appears:
+            boss.puke()
+            boss.life(screen)
+            
+            # Verifica colisão do boss e bullet
+            collisions_boss_bullets = pygame.sprite.spritecollide(player, all_puke, True)
+            if len(collisions_boss_bullets) > 0:
+                boss.health -= 10
+                if boss.health <= 0:
+                    boss.kill()
+                collisions_boss_bullets = 0
+        
+        # Verifica se houve colisão entre jogador e puke
+        collisions_player_puke = pygame.sprite.spritecollide(player, all_puke, True, pygame.sprite.collide_mask)
+        if len(collisions_player_puke) > 0:
+            player.health -= 10
+            collisions_player_puke = 0
+        
         # Desenhando o score
         text_surface = assets[SCORE_FONT].render("{:08d}".format(score), True, BLACK)
         text_rect = text_surface.get_rect()

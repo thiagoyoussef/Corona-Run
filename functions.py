@@ -35,16 +35,12 @@ def start_screen(screen):
     screen.fill(BLACK)
     font1 = pygame.font.SysFont("comicsansms", 48)
     font2 = pygame.font.SysFont("comicsansms", 24)
-    
     text = font1.render('CORONA RUN', True, GREEN) 
     screen.blit(text, [WIDTH//8, HEIGHT//4])
-
     text = font2.render('PRESS SPACE TO JUMP AND DOUBLE SPACE TO MEGAJUMP', True, GREEN) 
     screen.blit(text, [WIDTH//8, HEIGHT//2])
-
     text = font2.render('Press any key to start', True, GREEN)  
     screen.blit(text, [WIDTH//8, HEIGHT*3/4])
-
     pygame.display.flip()
     pygame.display.update()
     while True:

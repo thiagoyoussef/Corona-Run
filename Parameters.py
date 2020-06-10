@@ -6,9 +6,11 @@ será utilizado nas classes e funções
 from os import path
 import pygame
 
-# Estabelece a pasta que contem as figuras e sons.
-img_dir = path.join(path.dirname(__file__), 'img')
-sound_dir = path.join(path.dirname(__file__), 'sounds')
+# Estabelece a pasta que contem as figuras, sons e fontes.
+img_dir = path.join(path.dirname(__file__), 'assets', 'img')
+snd_dir = path.join(path.dirname(__file__),  'assets', 'snd')
+font_dir = path.join(path.dirname(__file__),  'assets', 'font')
+
 
 # Dados gerais do jogo.
 TITULO = 'Corona Run'
@@ -23,6 +25,7 @@ SCORE_FONT = 'PressStart2P.ttf'
 GAME_OVER_IMG = 'game_over.png'
 PUKE_IMG = 'puke.png'
 BLOCK_IMG = 'block_img.png'
+BULLET_IMG = 'balinha.png'
 
 # Define algumas variáveis com as cores básicas
 WHITE = (255, 255, 255)
@@ -56,6 +59,10 @@ world_speed = -7
 INITIAL_CACTOS = 2 # Cactos
 INITIAL_BLOCKS = 4 # Blocks
 
-# Outras constantes
+# Tamanho de alguns sprites
 TILE_SIZE = 50
 BOSS_SIZE = 175
+BULLET_SIZE = 60
+
+# Score que o boss entra na tela
+boss_appears = 3000
