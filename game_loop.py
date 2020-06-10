@@ -101,7 +101,7 @@ def game_screen(screen):
         score += 5
 
         # Verifica se houve colisão entre jogador e cacto
-        hits = pygame.sprite.spritecollide(player, all_cactos, True)
+        hits = pygame.sprite.spritecollide(player, all_cactos, True,  pygame.sprite.collide_mask)
         if len(hits) > 0:
             player.health -= 10
             OK = False
@@ -117,8 +117,9 @@ def game_screen(screen):
             # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados              
             all_sprites.add(new_cacto)
             all_cactos.add(new_cacto)
-            if player.health <= 0:
-                game_state = game_over_screen(screen, assets)
+
+        if player.health <= 0:
+            game_state = game_over_screen(screen, assets)
 
         # Verifica se algum cacto saiu da janela
         for cacto in all_cactos:
@@ -201,11 +202,12 @@ def game_screen(screen):
             boss.life(screen)
             
             # Verifica colisão do boss e bullet
-            collisions_boss_bullets = pygame.sprite.spritecollide(player, all_puke, True)
+            collisions_boss_bullets = pygame.sprite.spritecollide(boss, all_bullets, True, pygame.sprite.collide_mask)
             if len(collisions_boss_bullets) > 0:
-                boss.health -= 10
+                boss.health -= 40
                 if boss.health <= 0:
                     boss.kill()
+                    #ganha a coronita como prêmio aqui
                 collisions_boss_bullets = 0
         
         # Verifica se houve colisão entre jogador e puke
@@ -222,3 +224,6 @@ def game_screen(screen):
 
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
+
+
+

@@ -65,4 +65,4 @@ BOSS_SIZE = 175
 BULLET_SIZE = 60
 
 # Score que o boss entra na tela
-boss_appears = 3000
+boss_appears = 500 # a definir, deixei baixo para rodar os testes

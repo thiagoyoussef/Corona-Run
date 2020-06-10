@@ -131,6 +131,8 @@ class Player(pygame.sprite.Sprite):
         # Estabelece vida
         self.health = 100
 
+        self.mask = pygame.mask.from_surface(self.image)
+
     # Metodo que atualiza a posição do personagem
     def update(self):
         self.speedy += GRAVITY
@@ -281,7 +283,8 @@ class Boss(pygame.sprite.Sprite):
         
         # Atualização da posição do boss, manter comentado a linha abaixo para ficar estático
         #self.rect.x += self.speedx
-        # Mantem dentro da tela
+
+        # Mantém dentro da tela
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
         if self.rect.left < 0:
@@ -356,5 +359,7 @@ class Cactos(pygame.sprite.Sprite):
         self.rect.y = y
         self.speedx = speedx
         
+        self.mask = pygame.mask.from_surface(self.image)
+
     def update(self):
         self.rect.x += self.speedx
