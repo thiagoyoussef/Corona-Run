@@ -10,19 +10,20 @@ from sprites import *
 from functions import *
 
 # Função principal do jogo
-def game_screen(screen):
+def game_screen(screen,assets,player_type):
 
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
-    
-    # Carrega assets
-    assets = load_assets(img_dir)
 
     # Carrega o fundo do jogo
     background = assets[BACKGROUND_IMG]
+    
     # Redimensiona o fundo
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     background_rect = background.get_rect()
+
+    # Carrega jogadores
+    players = load_players(assets)
 
     # Cria grupos
     all_sprites = pygame.sprite.Group() # Grupo de todos os sprites
@@ -39,10 +40,12 @@ def game_screen(screen):
     groups['all_puke'] = all_puke
     groups['all_bullets'] = all_bullets
 
+    
     # Cria Sprite do jogador e adiciona ao grupo
-    player = Player(assets, groups)
-    all_sprites.add(player) 
-  
+    player = Player(assets, groups, players[player_type])
+    groups['player'] = player
+    all_sprites.add(player)
+
     # Cria cactos espalhados em posições aleatórias do mapa
     for i in range(INITIAL_CACTOS):
         cacto_x = random.randint(800, 1400)
@@ -66,13 +69,6 @@ def game_screen(screen):
     DONE = 1
     state = PLAYING
     pygame.mixer.music.play()
-
-    game_state = 'start'
-
-  # Mostra a tela inicial
-    if game_state == 'start':
-        start_screen(screen,assets)
-
     game_state = 'playing'
 
     # While principal
@@ -91,6 +87,7 @@ def game_screen(screen):
                 # Dependendo da tecla, altera o estado do jogador.
                 if event.key == pygame.K_SPACE:
                     player.jump()
+                    assets[JUMP_SOUND].play()
                 if event.key == pygame.K_d and score >= boss_appears:
                     player.shoot()
 
@@ -215,7 +212,7 @@ def game_screen(screen):
         if len(collisions_player_puke) > 0:
             player.health -= 10
             collisions_player_puke = 0
-        
+
         # Desenhando o score
         text_surface = assets[SCORE_FONT].render("{:08d}".format(score), True, BLACK)
         text_rect = text_surface.get_rect()

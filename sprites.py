@@ -69,7 +69,7 @@ class Bullet(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
 
     # Construtor da classe.
-    def __init__(self, assets, groups):
+    def __init__(self, assets, groups, config):
 
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -78,31 +78,37 @@ class Player(pygame.sprite.Sprite):
         self.assets = assets
 
         # Aumenta o tamanho da imagem
-        player_img = pygame.transform.scale(assets[PLAYER_IMG], (250, 100))
+        player_img = pygame.transform.scale(config[0], (config[1], config[2]))
 
         # Guarda os grupos de sprites para tratar as colisões
         self.blocks = groups['all_blocks']
 
-        # Define sequências de sprites de cada animação
-        spritesheet = load_spritesheet(player_img, 1, 5)
-        self.animations = {
-            STILL: spritesheet[2:4],
-            JUMPING: spritesheet[2:3],
-            MEGA_JUMP_1: spritesheet[2:3],
-            MEGA_JUMP_2: spritesheet[2:3],
-            FALLING: spritesheet[3:4],
-        }
-        
+        self.image = player_img
+
         # Define estado atual
         # Usamos o estado para decidir se o jogador pode ou não pular
         self.state = STILL
 
-        # Define animação atual
-        self.animation = self.animations[self.state]
+         # Define sequências de sprites de cada animação
+        self.dino = config[3]
+        if self.dino == True:
+            spritesheet = load_spritesheet(player_img, 1, 5)
+            self.animations = {
+                STILL: spritesheet[2:4],
+                JUMPING: spritesheet[2:3],
+                MEGA_JUMP_1: spritesheet[2:3],
+                MEGA_JUMP_2: spritesheet[2:3],
+                FALLING: spritesheet[3:4],
+            }
+            # Define animação atual
+            self.animation = self.animations[self.state]
+            
+            # Inicializa o primeiro quadro da animação
+            self.frame = 0
+            self.image = self.animation[self.frame]
 
-        # Inicializa o primeiro quadro da animação
-        self.frame = 0
-        self.image = self.animation[self.frame]
+            # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
+            self.frame_ticks = 75
 
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
@@ -119,9 +125,6 @@ class Player(pygame.sprite.Sprite):
         # Só será possível atirar uma vez a cada 400 milissegundos
         self.last_shot = pygame.time.get_ticks()
         self.shoot_ticks = 400
-
-        # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
-        self.frame_ticks = 75
 
         # Variável que contem a altura maxima do jogador antes de cair
         self.highest_y = self.rect.bottom
@@ -183,32 +186,33 @@ class Player(pygame.sprite.Sprite):
         # Verifica o tick atual.
         now = pygame.time.get_ticks()
 
-        # Verifica quantos ticks se passaram desde a ultima mudança de frame.
-        elapsed_ticks = now - self.last_update
+        if self.dino == True:
+            # Verifica quantos ticks se passaram desde a ultima mudança de frame.
+            elapsed_ticks = now - self.last_update
 
-        # Se já está na hora de  mudar de imagem...
-        if elapsed_ticks > self.frame_ticks:
+            # Se já está na hora de  mudar de imagem...
+            if elapsed_ticks > self.frame_ticks:
 
-            # Marca o tick da nova imagem.
-            self.last_update = now
+                # Marca o tick da nova imagem.
+                self.last_update = now
 
-            # Avança um quadro.
-            self.frame += 1
+                # Avança um quadro.
+                self.frame += 1
 
-            # Atualiza animação atual
-            self.animation = self.animations[self.state]
-            
-            # Reinicia a animação caso o índice da imagem atual seja inválido
-            if self.frame >= len(self.animation):
-                self.frame = 0
-            
-            # Armazena a posição do centro da imagem
-            center = self.rect.center
-            # Atualiza imagem atual
-            self.image = self.animation[self.frame]
-            # Atualiza os detalhes de posicionamento
-            self.rect = self.image.get_rect()
-            self.rect.center = center
+                # Atualiza animação atual
+                self.animation = self.animations[self.state]
+
+                # Reinicia a animação caso o índice da imagem atual seja inválido
+                if self.frame >= len(self.animation):
+                    self.frame = 0
+
+                # Armazena a posição do centro da imagem
+                center = self.rect.center
+                # Atualiza imagem atual
+                self.image = self.animation[self.frame]
+                # Atualiza os detalhes de posicionamento
+                self.rect = self.image.get_rect()
+                self.rect.center = center
 
     # Método que faz o personagem pular
     def jump(self):
