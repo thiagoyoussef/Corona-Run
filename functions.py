@@ -35,12 +35,11 @@ def start_screen(screen, assets):
     home_screen_img = pygame.transform.scale(assets[HOME_SCREEN], (int(WIDTH) , int(HEIGHT)))
     background_rect = home_screen_img.get_rect()
     screen.blit(home_screen_img, background_rect)
-    font1 = pygame.font.SysFont("comicsansms", 48)
-    font2 = pygame.font.SysFont("comicsansms", 24)
-    text = font2.render('START', True, GREEN)  
-    screen.blit(text, [WIDTH//8 + 220, HEIGHT*3/4])
-    text = font2.render('QUIT', True, GREEN)
-    screen.blit(text, [WIDTH//8 + 220, HEIGHT*3/4])
+    font = pygame.font.SysFont("comicsansms", 48)
+    text = font.render('START', True, BLACK)  
+    screen.blit(text, [WIDTH//8 + 250, HEIGHT*2/4])
+    text = font.render('QUIT', True, BLACK)
+    screen.blit(text, [WIDTH//8 + 320, HEIGHT*3/4 - 100])
     pygame.display.flip()
     pygame.display.update()
     while True:
@@ -54,7 +53,6 @@ def start_screen(screen, assets):
 
 # Função que adiciona a tela de game over
 def game_over_screen(screen, assets):
-
 
     # Redimensiona o tamanho da imagem
     game_over_img = pygame.transform.scale(assets[GAME_OVER_IMG], (int(WIDTH/2.114) , int(HEIGHT/2.4)))

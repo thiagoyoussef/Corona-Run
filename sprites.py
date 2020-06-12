@@ -8,6 +8,7 @@ import pygame
 from parameters import *
 from assets import *
 from functions import *
+from game_loop import *
 
 # Class que representa os blocos do cenário
 class Tile(pygame.sprite.Sprite):
@@ -261,14 +262,13 @@ class Boss(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-
         boss_img = pygame.transform.scale(assets[BOSS_IMG], (BOSS_SIZE, BOSS_SIZE))
         self.image = boss_img
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH - 100
         self.rect.bottom = HEIGHT - 360
-        self.speedx = 0
+        self.speedy = 0
         self.groups = groups
         self.assets = assets
 
@@ -276,19 +276,42 @@ class Boss(pygame.sprite.Sprite):
         self.last_shot = pygame.time.get_ticks()
         self.shoot_ticks = 2000
 
+        # Ele não pode mudar de velocidade a todo frame
+        self.last_speed = pygame.time.get_ticks()
+        self.speed_tick = 500
+
         # Estabelece vida
         self.health = 200
 
     def update(self):
         
+        # Verifica se pode mudar a speed
+        time = pygame.time.get_ticks()
+        elapsed_ticks = time - self.last_speed
+
+        # Se já pode disparar novamente...
+        if elapsed_ticks > self.speed_tick:
+            # Marca o tick da nova imagem.
+            self.last_speed = time
+            self.speedy = random.choice([-5,5])
+            
         # Atualização da posição do boss, manter comentado a linha abaixo para ficar estático
-        #self.rect.x += self.speedx
+        self.rect.y += self.speedy
 
         # Mantém dentro da tela
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
+
         if self.rect.left < 0:
             self.rect.left = 0
+
+        if self.rect.top <= 100:
+            self.rect.top = 101
+            self.rect.y += self.speedy
+
+        if self.rect.bottom >= HEIGHT - 100:
+            self.rect.bottom = HEIGHT - 100
+            self.rect.y -= self.speedy
 
     def puke(self):
 

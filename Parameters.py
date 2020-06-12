@@ -19,6 +19,7 @@ HEIGHT = 600 # Altura da tela
 FPS = 60 # Frames por segundo
 PLAYER_IMG = 'dino.png'
 BOSS_IMG = 'boss.png'
+BOSS_SMILE = 'boss_kill.png'
 BACKGROUND_IMG = 'background.png'
 CACTOS_IMG = 'cactos.png'
 SCORE_FONT = 'PressStart2P.ttf'
