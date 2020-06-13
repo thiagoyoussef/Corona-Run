@@ -30,6 +30,8 @@ def load_assets(img_dir):
     assets[BLOCK_IMG] = pygame.image.load(path.join(img_dir, BLOCK_IMG)).convert_alpha()
     assets[BULLET_IMG] = pygame.image.load(path.join(img_dir, BULLET_IMG)).convert_alpha()
     assets[HOME_SCREEN] = pygame.image.load(path.join(img_dir, HOME_SCREEN)).convert_alpha()
+    assets[REPLAY] = pygame.image.load(path.join(img_dir, REPLAY)).convert_alpha()
+    
     # Carrega fontes do jogo
     assets[SCORE_FONT] = pygame.font.Font(os.path.join(font_dir, SCORE_FONT), 28)
     # Carrega som do jogo

@@ -27,6 +27,7 @@ PUKE_IMG = 'puke.png'
 BLOCK_IMG = 'block_img.png'
 BULLET_IMG = 'balinha.png'
 HOME_SCREEN = 'home_screen.png'
+REPLAY = 'replay_button.png'
 
 # Parametros relacionados aos sons
 JUMP_SOUND = 'jump.ogg'

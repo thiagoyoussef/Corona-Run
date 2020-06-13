@@ -6,7 +6,9 @@ serão utilizadas no pygame
 import pygame
 from parameters import *
 import time
+from game_loop import*
 from players import load_players
+from assets import*
 
 # Animacoes quando o personagem anda
 def load_spritesheet(spritesheet, rows, columns):
@@ -36,41 +38,36 @@ def start_screen(screen, assets):
     home_screen_img = pygame.transform.scale(assets[HOME_SCREEN], (int(WIDTH) , int(HEIGHT)))
     background_rect = home_screen_img.get_rect()
     screen.blit(home_screen_img, background_rect)
-    font = pygame.font.SysFont("comicsansms", 48)
+    font = assets[SCORE_FONT]
     while True:
         START = font.render('START', True, BLACK)
         START_rect = START.get_rect()
-        START_rect.x = WIDTH//8 + 250
+        START_rect.x = WIDTH//8 + 295
         START_rect.y = HEIGHT*2/4
-        screen.blit(START, [WIDTH//8 + 250, HEIGHT*2/4])
+        screen.blit(START, [START_rect.x, START_rect.y])
         QUIT = font.render('QUIT', True, BLACK)
         QUIT_rect = QUIT.get_rect()
-        QUIT_rect.x = WIDTH//8 + 320
+        QUIT_rect.x = WIDTH//8 + 310
         QUIT_rect.y = HEIGHT*3/4 - 100
-        screen.blit(QUIT, [WIDTH//8 + 320, HEIGHT*3/4 - 100])
+        screen.blit(QUIT, [QUIT_rect.x, QUIT_rect.y])
         pygame.display.flip()
         pygame.display.update()
         for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                pygame.quit()
+            
             click = pygame.mouse.get_pos()
-            if click[0] > START_rect.left and click[0] < START_rect.right and click[1] > START_rect.top and click[1] < START_rect.bottom:
+            if START_rect.left < click[0] < START_rect.right and START_rect.top < click[1]  < START_rect.bottom:
                 START = font.render('START', True, GREEN)
-                START_rect = START.get_rect()
-                START_rect.x = WIDTH//8 + 250
-                START_rect.y = HEIGHT*2/4
-                screen.blit(START, [WIDTH//8 + 250, HEIGHT*2/4])
+                screen.blit(START, [START_rect.x, START_rect.y])
                 pygame.display.flip()
                 pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     return False
-                
-        for event in pygame.event.get():
-            click = pygame.mouse.get_pos()
-            if click[0] > QUIT_rect.left and click[0] < QUIT_rect.right and click[1] > QUIT_rect.top and click[1] < QUIT_rect.bottom:
+                                    
+            if QUIT_rect.left< click[0] < QUIT_rect.right and QUIT_rect.top < click[1] < QUIT_rect.bottom:
                 QUIT = font.render('QUIT', True, GREEN)
-                QUIT_rect = QUIT.get_rect()
-                QUIT_rect.x = WIDTH//8 + 320
-                QUIT_rect.y = HEIGHT*3/4 - 100
-                screen.blit(QUIT, [WIDTH//8 + 320, HEIGHT*3/4 - 100])
+                screen.blit(QUIT, [QUIT_rect.x, QUIT_rect.y])
                 pygame.display.flip()
                 pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -149,25 +146,67 @@ def player_screen(screen, assets):
                     return CORONITA
                 if click[0] > flappy_rect.left and click[0] < flappy_rect.right and click[1] > flappy_rect.top and click[1] < flappy_rect.bottom:
                     return FLAPPY
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                pygame.quit()
         pygame.display.update()
 
 # Função que adiciona a tela de game over
 def game_over_screen(screen, assets):
 
     # Redimensiona o tamanho da imagem
-    game_over_img = pygame.transform.scale(assets[GAME_OVER_IMG], (int(WIDTH/2.114) , int(HEIGHT/2.4)))
-    background_rect = game_over_img.get_rect()
-
+    replay = pygame.transform.scale(assets[REPLAY], (int(WIDTH/8) , int(HEIGHT/8)))
+    background_rect = replay.get_rect()
     # Centraliza a imagem
     background_rect.centerx = WIDTH / 2
-    background_rect.bottom = int(HEIGHT / 1.5)
-    
-    # Desenha a imagem
-    screen.fill(BLACK)
-    screen.blit(game_over_img, background_rect)
-    pygame.display.flip()
+    background_rect.bottom = int(HEIGHT * 7/8)
 
-    # Pausa o jogo na tela de game over
-    time.sleep(1)
+    while True:
+        # Desenha a tela
+        screen.fill(BLACK)
+        
+        # Busca os valores de score e high_score nos respectivos arquivos
+        with open('high_score.txt', 'r') as file:
+            X = file.read()
+            high_score = int(X)
+        with open('score.txt', 'r') as file:
+            Y = file.read()
+            final_score = int(Y)
+
+        # Desenha o score
+        text_surface = assets[SCORE_FONT].render("Score: {:08d}".format(final_score), True, RED)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (WIDTH / 2,  50)
+        screen.blit(text_surface, text_rect)
+
+        # Desenha o high score
+        text_surface = assets[SCORE_FONT].render("High Score: {:08d}".format(high_score), True, RED)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (WIDTH / 2,  100)
+        screen.blit(text_surface, text_rect)
+
+        # Escreve nossos nomes
+        font = assets[SCORE_FONT]    
+        text = font.render('By: Luca, Thiago and Victor', True, RED) 
+        screen.blit(text, [WIDTH//8 + 20, HEIGHT//4 + 100])
+
+        # Escreve a opção de  play again
+        font = assets[SCORE_FONT]    
+        text = font.render('To play again, press the button', True, RED) 
+        screen.blit(text, [WIDTH//10 - 20, HEIGHT//4 + 200])
+        
+        # Adiciona o botão de replay
+        screen.blit(replay, background_rect)
+        pygame.display.flip()
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                press = pygame.mouse.get_pressed()
+                if press and background_rect.left < pos[0] < background_rect.right and background_rect.top < pos[1] < background_rect.bottom:
+                    return False
     
-    return 'endgame'
+
+   
+    

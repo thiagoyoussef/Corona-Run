@@ -119,7 +119,20 @@ def game_screen(screen,assets,player_type):
             all_cactos.add(new_cacto)
 
         if player.health <= 0:
-            game_state = game_over_screen(screen, assets)
+            final_score = str(score)
+            with open('score.txt', 'w') as arquivo:
+                arquivo.write(final_score)
+            return 'endgame'
+            
+            # Atualiza o high score
+            with open('high_score.txt', 'r') as file:
+                X = file.read()
+                high_score = int(X)
+            # Confere se o high score foi batido e apenas altera ele caso tenha sido
+            if score > high_score:
+                high_score = score
+                with open('high_score.txt', 'w') as arquivo:
+                    arquivo.write(str(high_score))
 
         # Verifica se algum cacto saiu da janela
         for cacto in all_cactos:
@@ -227,6 +240,7 @@ def game_screen(screen,assets,player_type):
         if len(collisions_player_puke) > 0:
             player.health -= 10
             collisions_player_puke = 0
+        
 
         # Desenhando o score
         text_surface = assets[SCORE_FONT].render("{:08d}".format(score), True, BLACK)
