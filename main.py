@@ -33,7 +33,6 @@ try:
                 if game_over_screen(screen, assets) == False:
                     player_type = player_screen(screen, assets)
                     game_screen(screen, assets, player_type)
-
 finally:
     pygame.quit()
 

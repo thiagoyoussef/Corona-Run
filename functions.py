@@ -212,7 +212,7 @@ def game_over_screen(screen, assets):
 
         # Escreve nossos nomes
         font = assets[SCORE_FONT]    
-        text = font.render('By: Luca, Thiago and Victor', True, RED) 
+        text = font.render('By: Luca, Thiago and Vitor', True, RED) 
         screen.blit(text, [WIDTH//8 + 20, HEIGHT//4 + 100])
 
         # Escreve a opção de  play again
