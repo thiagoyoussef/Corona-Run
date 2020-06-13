@@ -10,8 +10,9 @@ from game_loop import*
 from players import load_players
 from assets import*
 
-# Animacoes quando o personagem anda
+''' Função que retorna sprites das diferentes animações de um sprite'''
 def load_spritesheet(spritesheet, rows, columns):
+    
     # Calcula a largura e altura de cada sprite.
     sprite_width = spritesheet.get_width() // columns
     sprite_height = spritesheet.get_height() // rows
@@ -20,25 +21,32 @@ def load_spritesheet(spritesheet, rows, columns):
     sprites = []
     for row in range(rows):
         for column in range(columns):
+            
             # Calcula posição do sprite atual
             x = column * sprite_width
             y = row * sprite_height
+            
             # Define o retângulo que contém o sprite atual
             dest_rect = pygame.Rect(x, y, sprite_width, sprite_height)
-
+            
             # Cria uma imagem vazia do tamanho do sprite
             image = pygame.Surface((sprite_width, sprite_height),pygame.SRCALPHA)
+            
             # Copia o sprite atual (do spritesheet) na imagem
             image.blit(spritesheet, (0, 0), dest_rect)
             sprites.append(image)
     return sprites
 
-# Função que adiciona a tela de start
+''' Função que adiciona a tela de start'''
 def start_screen(screen, assets):
+    
+    # Carrega a imagem e desenha ela
     home_screen_img = pygame.transform.scale(assets[HOME_SCREEN], (int(WIDTH) , int(HEIGHT)))
     background_rect = home_screen_img.get_rect()
     screen.blit(home_screen_img, background_rect)
     font = assets[SCORE_FONT]
+    
+    # Realiza animações ao passar mouse nos botões START/QUIT
     while True:
         START = font.render('START', True, BLACK)
         START_rect = START.get_rect()
@@ -53,9 +61,12 @@ def start_screen(screen, assets):
         pygame.display.flip()
         pygame.display.update()
         for event in pygame.event.get():
+            
+            # Verifica se jogador desejas finalizar o jogo
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
             
+            # Acrescenta o click nos botões START/QUIT
             click = pygame.mouse.get_pos()
             if START_rect.left < click[0] < START_rect.right and START_rect.top < click[1]  < START_rect.bottom:
                 START = font.render('START', True, GREEN)
@@ -63,8 +74,7 @@ def start_screen(screen, assets):
                 pygame.display.flip()
                 pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    return False
-                                    
+                    return False           
             if QUIT_rect.left< click[0] < QUIT_rect.right and QUIT_rect.top < click[1] < QUIT_rect.bottom:
                 QUIT = font.render('QUIT', True, GREEN)
                 screen.blit(QUIT, [QUIT_rect.x, QUIT_rect.y])
@@ -73,57 +83,72 @@ def start_screen(screen, assets):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     return 'quit'
 
-# Função que adiciona a inicio com seleção de personagens
+''' Função que adiciona o inicio com seleção de personagens'''
 def player_screen(screen, assets):
+    
+    # Carrega os players
     players = load_players(assets)
+    
+    # Carrega a imagem de fundo 
     background_img = pygame.transform.scale(assets[BACKGROUND_IMG], (int(WIDTH) , int(HEIGHT)))
+    
+    # Carrega a fonte e escolhe o que será escrito na tela
+    font = assets[SCORE_FONT]
+    choose = font.render('Choose your caracter', True, BLACK)
+    
+    # Ajusta a escala e as coordenadas dos personagens
     kratos = pygame.transform.scale(players[KRATOS][0], (int(players[KRATOS][1]) , int(players[KRATOS][2])))
     kratos_rect = kratos.get_rect()
-    kratos_rect.x = 267
+    kratos_rect.x = 251
     kratos_rect.y = 88
     sonic = pygame.transform.scale(players[SONIC][0], (int(players[SONIC][1]) , int(players[SONIC][2])))
     sonic_rect = sonic.get_rect()
     sonic_rect.x = 417
     sonic_rect.y = 88
-    dino = pygame.transform.scale(players[DINO][0], (int(players[DINO][1]) , int(players[DINO][2])))
+    dino = pygame.transform.scale(assets['dino_play.png'], (int(100) , int(70)))
     dino_rect = dino.get_rect()
     dino_rect.x = 567
     dino_rect.y = 88
     mario = pygame.transform.scale(players[MARIO][0], (int(players[MARIO][1]) , int(players[MARIO][2])))
     mario_rect = mario.get_rect()
-    mario_rect.x = 267
+    mario_rect.x = 296
     mario_rect.y = 238
     yoshi = pygame.transform.scale(players[YOSHI][0], (int(players[YOSHI][1]) , int(players[YOSHI][2])))
     yoshi_rect = yoshi.get_rect()
     yoshi_rect.x = 417
-    yoshi_rect.y = 238
+    yoshi_rect.y = 388
     ash = pygame.transform.scale(players[ASH][0], (int(players[ASH][1]) , int(players[ASH][2])))
     ash_rect = ash.get_rect()
-    ash_rect.x = 567
+    ash_rect.x = 587
     ash_rect.y = 238
     deadpool = pygame.transform.scale(players[DEADPOOL][0], (int(players[DEADPOOL][1]) , int(players[DEADPOOL][2])))
     deadpool_rect = deadpool.get_rect()
     deadpool_rect.x = 267
-    deadpool_rect.y = 388
+    deadpool_rect.y = 368
     coronita = pygame.transform.scale(players[CORONITA][0], (int(players[CORONITA][1]) , int(players[CORONITA][2])))
     coronita_rect = coronita.get_rect()
     coronita_rect.x = 417
-    coronita_rect.y = 388
+    coronita_rect.y = 208
     flappy = pygame.transform.scale(players[FLAPPY][0], (int(players[FLAPPY][1]) , int(players[FLAPPY][2])))
     flappy_rect = flappy.get_rect()
     flappy_rect.x = 567
     flappy_rect.y = 388
     background_rect = background_img.get_rect()
+
+    # Desenha na tela a imagem de fundo, personagens e texto
     screen.blit(background_img, background_rect)
-    screen.blit(kratos, [267, 88])
+    screen.blit(choose, [210, 30])
+    screen.blit(kratos, [251, 88])
     screen.blit(sonic, [417, 88])
     screen.blit(dino, [567, 88])
-    screen.blit(mario, [267, 238])
-    screen.blit(yoshi, [417, 238])
-    screen.blit(ash, [567, 238])
-    screen.blit(deadpool, [267, 388])
-    screen.blit(coronita, [417, 388])
+    screen.blit(mario, [296, 238])
+    screen.blit(yoshi, [417, 388])
+    screen.blit(ash, [587, 238])
+    screen.blit(deadpool, [267, 368])
+    screen.blit(coronita, [417, 208])
     screen.blit(flappy, [567, 388])
+
+    # Verifica se o jogador clicou em algum personagem
     while True:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -146,21 +171,22 @@ def player_screen(screen, assets):
                     return CORONITA
                 if click[0] > flappy_rect.left and click[0] < flappy_rect.right and click[1] > flappy_rect.top and click[1] < flappy_rect.bottom:
                     return FLAPPY
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                pygame.quit()
         pygame.display.update()
 
-# Função que adiciona a tela de game over
+''' Função que adiciona a tela de game over'''
 def game_over_screen(screen, assets):
 
     # Redimensiona o tamanho da imagem
     replay = pygame.transform.scale(assets[REPLAY], (int(WIDTH/8) , int(HEIGHT/8)))
     background_rect = replay.get_rect()
-    # Centraliza a imagem
+    
+    # Localização da imagem
     background_rect.centerx = WIDTH / 2
     background_rect.bottom = int(HEIGHT * 7/8)
 
+    # Loop do game over
     while True:
+        
         # Desenha a tela
         screen.fill(BLACK)
         
@@ -201,6 +227,7 @@ def game_over_screen(screen, assets):
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 pygame.quit()
+                return False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 press = pygame.mouse.get_pressed()

@@ -9,12 +9,13 @@ from assets import *
 from sprites import *
 from functions import *
 
-# Função principal do jogo
+''' Função principal do jogo'''
 def game_screen(screen,assets,player_type):
 
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
     
+    # Cria lista que será usada para verificar condições usadas para criar o segundo boss
     boss_die = [False, -1, False]
 
     # Carrega o fundo do jogo
@@ -33,6 +34,7 @@ def game_screen(screen,assets,player_type):
     all_cactos = pygame.sprite.Group()
     all_puke = pygame.sprite.Group()
     all_bullets = pygame.sprite.Group()
+    foreground = pygame.sprite.Group()
 
     # Cria dicionário para adicionar todos os grupos
     groups = {}
@@ -41,7 +43,6 @@ def game_screen(screen,assets,player_type):
     groups['all_cactos'] = all_cactos
     groups['all_puke'] = all_puke
     groups['all_bullets'] = all_bullets
-    foreground = pygame.sprite.Group()
     
     # Cria Sprite do jogador e adiciona ao grupo
     player = Player(assets, groups, players[player_type])
@@ -68,9 +69,6 @@ def game_screen(screen,assets,player_type):
         all_blocks.add(block)
 
     score = 0
-    PLAYING = 0
-    DONE = 1
-    state = PLAYING
     pygame.mixer.music.play()
     game_state = 'playing'
 
@@ -118,6 +116,7 @@ def game_screen(screen,assets,player_type):
             all_sprites.add(new_cacto)
             all_cactos.add(new_cacto)
 
+        # Verifica vida do personagem
         if player.health <= 0:
             final_score = str(score)
             with open('score.txt', 'w') as arquivo:
@@ -128,6 +127,7 @@ def game_screen(screen,assets,player_type):
             with open('high_score.txt', 'r') as file:
                 X = file.read()
                 high_score = int(X)
+            
             # Confere se o high score foi batido e apenas altera ele caso tenha sido
             if score > high_score:
                 high_score = score
@@ -220,10 +220,12 @@ def game_screen(screen,assets,player_type):
             collisions_boss_bullets = pygame.sprite.spritecollide(boss, all_bullets, True, pygame.sprite.collide_mask)
             if len(collisions_boss_bullets) > 0:
                 boss.health -= 40
+
                 # Verifica vida do segundo boss
                 if boss_die[0] == True and boss.health <= 0:
                     boss_die = [True, score+100, True]
                     boss.kill()
+
                 # Verifica vida do primeiro boss
                 if boss.health <= 0 and boss_die[0] == False:
                     boss_die = [True, score+1000, False]
@@ -240,8 +242,7 @@ def game_screen(screen,assets,player_type):
         if len(collisions_player_puke) > 0:
             player.health -= 10
             collisions_player_puke = 0
-        
-
+    
         # Desenhando o score
         text_surface = assets[SCORE_FONT].render("{:08d}".format(score), True, BLACK)
         text_rect = text_surface.get_rect()

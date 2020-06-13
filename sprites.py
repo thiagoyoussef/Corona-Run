@@ -10,7 +10,7 @@ from assets import *
 from functions import *
 from game_loop import *
 
-# Class que representa os blocos do cenário
+''' Class que representa os blocos do cenário'''
 class Tile(pygame.sprite.Sprite):
 
     # Construtor da classe.
@@ -33,10 +33,11 @@ class Tile(pygame.sprite.Sprite):
         self.rect.y = y
         self.speedx = speedx
 
+    # Metodo que atualiza a posição do bloco
     def update(self):
         self.rect.x += self.speedx
 
-# Classe Bullet que representa os tiros
+''' Classe Bullet que representa os tiros'''
 class Bullet(pygame.sprite.Sprite):
     
     # Construtor da classe.
@@ -55,7 +56,8 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.centery = centery
         self.rect.right = right
         self.speedx = 10  # Velocidade fixa para direita
-
+    
+    # Metodo que atualiza a posição do bullet
     def update(self):
         
         # A bala só se move no eixo x
@@ -65,7 +67,7 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 
-# Classe Jogador que representa o herói
+''' Classe Jogador que representa o herói'''
 class Player(pygame.sprite.Sprite):
 
     # Construtor da classe.
@@ -76,6 +78,7 @@ class Player(pygame.sprite.Sprite):
 
         self.groups = groups
         self.assets = assets
+        self.config = config
 
         # Aumenta o tamanho da imagem
         player_img = pygame.transform.scale(config[0], (config[1], config[2]))
@@ -89,9 +92,11 @@ class Player(pygame.sprite.Sprite):
         # Usamos o estado para decidir se o jogador pode ou não pular
         self.state = STILL
 
-         # Define sequências de sprites de cada animação
+        # Se for escolhido o personagem dino, realizar animacao
         self.dino = config[3]
         if self.dino == True:
+
+            # Define sequências de sprites de cada animação
             spritesheet = load_spritesheet(player_img, 1, 5)
             self.animations = {
                 STILL: spritesheet[2:4],
@@ -114,8 +119,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         # Começa o jogador no chao
-        self.rect.centerx = config[4]
-        self.rect.bottom = int(config[5])
+        self.rect.centerx = WIDTH / 10
+        self.rect.bottom = int(HEIGHT * 7/8)
         self.rect.top = 0
         self.speedy = 0
         
@@ -147,11 +152,11 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.speedy
 
         # Se bater no chão, para de cair
-        if self.rect.bottom > GROUND:
+        if self.rect.bottom > GROUND + self.config[4]:
             # Reinicia o contador de pulo
             self.jumps = 0
             # Reposiciona para a posição do chão
-            self.rect.bottom = GROUND
+            self.rect.bottom = GROUND + self.config[4]
             # Para de cair
             self.speedy = 0
             # Atualiza o estado para parado
@@ -261,9 +266,10 @@ class Player(pygame.sprite.Sprite):
             self.groups['all_sprites'].add(new_bullet)
             self.groups['all_bullets'].add(new_bullet)
 
-# Classe que representa o boss
+''' Classe que representa o boss'''
 class Boss(pygame.sprite.Sprite):
     def __init__(self, groups, assets):
+
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
         boss_img = pygame.transform.scale(assets[BOSS_IMG], (BOSS_SIZE, BOSS_SIZE))
@@ -287,6 +293,7 @@ class Boss(pygame.sprite.Sprite):
         # Estabelece vida
         self.health = 200
 
+    # Metodo que atualiza a posição do boss
     def update(self):
         
         # Verifica se pode mudar a speed
@@ -340,7 +347,7 @@ class Boss(pygame.sprite.Sprite):
         if self.health >= 0:
             pygame.draw.rect(screen, (0,255,0), (self.rect.x, self.rect.y - 60, 200 - (200 - self.health),10))
 
-# Classe Puke que representa os disparos do boss
+''' Classe Puke que representa os disparos do boss'''
 class Puke(pygame.sprite.Sprite):
     
     # Construtor da classe.
@@ -359,6 +366,7 @@ class Puke(pygame.sprite.Sprite):
         self.speedx = -10  # Velocidade fixa para esquerda
         self.speedy = random.randint(0,5) # Velocidade aleatória para baixo
 
+    # Metodo que atualiza a posição do puke
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -367,7 +375,7 @@ class Puke(pygame.sprite.Sprite):
         if self.rect.bottom < 0:
             self.kill()
 
-# Classe que reprenta os cactos
+''' Classe que reprenta os cactos'''
 class Cactos(pygame.sprite.Sprite):
     def __init__(self, assets, x, y, speedx):
         
@@ -388,5 +396,6 @@ class Cactos(pygame.sprite.Sprite):
         
         self.mask = pygame.mask.from_surface(self.image)
 
+    # Metodo que atualiza a posição do cacto
     def update(self):
         self.rect.x += self.speedx
