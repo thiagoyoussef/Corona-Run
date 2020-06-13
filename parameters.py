@@ -48,6 +48,9 @@ KRATOS = 'kratos.png'
 MARIO = 'mario.png'
 YOSHI = 'yoshi.png'
 CORONITA = 'coronita.png'
+DEADPOOL = 'deadpool.png'
+ASH = 'ash.png'
+FLAPPY = 'flappy.png'
 
 # Define algumas variáveis com as cores básicas
 WHITE = (255, 255, 255)
@@ -78,8 +81,8 @@ DEATH = 3
 world_speed = -7
 
 # Define a quantidade inicial de:
-INITIAL_CACTOS = 2 # Cactos
-INITIAL_BLOCKS = 4 # Blocks
+INITIAL_CACTOS = 3 # Cactos
+INITIAL_BLOCKS = 5 # Blocks
 
 # Tamanho de alguns sprites
 TILE_SIZE = 50
@@ -87,4 +90,4 @@ BOSS_SIZE = 175
 BULLET_SIZE = 60
 
 # Score que o boss entra na tela
-boss_appears = 500 # a definir, deixei baixo para rodar os testes
+boss_appears = 1500 # a definir, deixei baixo para rodar os testes

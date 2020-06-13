@@ -113,9 +113,9 @@ class Player(pygame.sprite.Sprite):
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
 
-        # Começa no centro da janela
-        self.rect.centerx = WIDTH / 10
-        self.rect.bottom = int(HEIGHT * 7 / 8)
+        # Começa o jogador no chao
+        self.rect.centerx = config[4]
+        self.rect.bottom = int(config[5])
         self.rect.top = 0
         self.speedy = 0
         

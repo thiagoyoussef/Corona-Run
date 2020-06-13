@@ -14,6 +14,8 @@ def game_screen(screen,assets,player_type):
 
     # Variável para o ajuste de velocidade
     clock = pygame.time.Clock()
+    
+    boss_die = [False, -1, False]
 
     # Carrega o fundo do jogo
     background = assets[BACKGROUND_IMG]
@@ -39,12 +41,13 @@ def game_screen(screen,assets,player_type):
     groups['all_cactos'] = all_cactos
     groups['all_puke'] = all_puke
     groups['all_bullets'] = all_bullets
-
+    foreground = pygame.sprite.Group()
     
     # Cria Sprite do jogador e adiciona ao grupo
     player = Player(assets, groups, players[player_type])
     groups['player'] = player
     all_sprites.add(player)
+    foreground.add(player)
 
     # Cria cactos espalhados em posições aleatórias do mapa
     for i in range(INITIAL_CACTOS):
@@ -184,16 +187,18 @@ def game_screen(screen,assets,player_type):
 
         # Desenha todos os sprites na tela
         all_sprites.draw(screen)
+        foreground.draw(screen)
 
         # Cria barra de vida
         player.life(screen)
 
-         # Adiciona o boss após um certo score
+         # Adiciona o primeiro boss após um certo score
         if score == boss_appears:
             boss = Boss(groups, assets)
             all_sprites.add(boss)
-        
-        # Junto com o boss inicia o disparo de puke
+            foreground.add(boss)
+
+        # Junto com o primeiro boss inicia o disparo de puke
         if score >= boss_appears and boss.health > 0:
             boss.puke()
             boss.life(screen)
@@ -202,11 +207,21 @@ def game_screen(screen,assets,player_type):
             collisions_boss_bullets = pygame.sprite.spritecollide(boss, all_bullets, True, pygame.sprite.collide_mask)
             if len(collisions_boss_bullets) > 0:
                 boss.health -= 40
-                if boss.health <= 0:
+                # Verifica vida do segundo boss
+                if boss_die[0] == True and boss.health <= 0:
+                    boss_die = [True, score+100, True]
                     boss.kill()
-                    #ganha a coronita como prêmio aqui
+                # Verifica vida do primeiro boss
+                if boss.health <= 0 and boss_die[0] == False:
+                    boss_die = [True, score+1000, False]
+                    boss.kill()
                 collisions_boss_bullets = 0
         
+        # Adiciona o segundo boss
+        if boss_die[0] == True and boss_die[1] == score and boss_die[2] == False:
+            boss = Boss(groups, assets)
+            all_sprites.add(boss)
+
         # Verifica se houve colisão entre jogador e puke
         collisions_player_puke = pygame.sprite.spritecollide(player, all_puke, True, pygame.sprite.collide_mask)
         if len(collisions_player_puke) > 0:
@@ -221,6 +236,7 @@ def game_screen(screen,assets,player_type):
 
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
+
 
 
 

@@ -24,9 +24,11 @@ assets = load_assets(img_dir)
 # Finalização 
 # Comando para evitar travamentos.
 try:
-    start_screen(screen, assets) # Mostra tela de start
-    player_type = player_screen(screen, assets) # Mostra tela de seleção de jogadores
-    game_screen(screen, assets, player_type) # Tela do jogo
+    if start_screen(screen, assets) != 'quit': # Mostra tela de start
+        player_type = player_screen(screen, assets) # Mostra tela de seleção de jogadores
+        game_screen(screen, assets, player_type) # Tela do jogo
 finally:
     pygame.quit()
+
+
     
