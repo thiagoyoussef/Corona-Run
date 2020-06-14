@@ -27,7 +27,7 @@ def load_assets(img_dir):
     assets[CACTOS_IMG] = pygame.image.load(path.join(img_dir, CACTOS_IMG)).convert_alpha()
     assets[GAME_OVER_IMG] = pygame.image.load(path.join(img_dir, GAME_OVER_IMG)).convert_alpha()
     assets[BOSS_IMG] = pygame.image.load(path.join(img_dir, BOSS_IMG)).convert_alpha()
-    #assets[BOSS_SMILE] = pygame.image.load(path.join(img_dir, BOSS_SMILE)).convert_alpha()
+    assets[FINAL_BOSS] = pygame.image.load(path.join(img_dir, FINAL_BOSS)).convert_alpha()
     assets[PUKE_IMG] = pygame.image.load(path.join(img_dir, PUKE_IMG)).convert_alpha()
     assets[BLOCK_IMG] = pygame.image.load(path.join(img_dir, BLOCK_IMG)).convert_alpha()
     assets[BULLET_IMG] = pygame.image.load(path.join(img_dir, BULLET_IMG)).convert_alpha()

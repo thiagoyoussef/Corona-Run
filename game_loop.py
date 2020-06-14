@@ -252,7 +252,7 @@ def game_screen(screen,assets,player_type):
 
          # Adiciona o primeiro boss após um certo score
         if score == boss_appears:
-            boss = Boss(groups, assets)
+            boss = Boss(groups, assets, assets[BOSS_IMG])
             all_sprites.add(boss)
             foreground.add(boss)
             assets[BACKINBLACK_SOUND].play()
@@ -289,7 +289,7 @@ def game_screen(screen,assets,player_type):
         
         # Adiciona o segundo boss
         if boss_die[0] == True and boss_die[1] == score and boss_die[2] == False:
-            boss = Boss(groups, assets)
+            boss = Boss(groups, assets, assets[FINAL_BOSS])
             all_sprites.add(boss)
             assets[BACKINBLACK_SOUND].play()
             assets[BACKINBLACK_SOUND].set_volume(0.03)
