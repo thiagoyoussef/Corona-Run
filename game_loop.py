@@ -8,6 +8,7 @@ from parameters import *
 from assets import *
 from sprites import *
 from functions import *
+from players import *
 
 ''' Função principal do jogo'''
 def game_screen(screen,assets,player_type):
@@ -20,7 +21,7 @@ def game_screen(screen,assets,player_type):
 
     # Carrega o fundo do jogo
     background = assets[BACKGROUND_IMG]
-    
+
     # Redimensiona o fundo
     background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     background_rect = background.get_rect()
@@ -34,6 +35,7 @@ def game_screen(screen,assets,player_type):
     all_cactos = pygame.sprite.Group()
     all_puke = pygame.sprite.Group()
     all_bullets = pygame.sprite.Group()
+    all_hearts = pygame.sprite.Group()
     foreground = pygame.sprite.Group()
 
     # Cria dicionário para adicionar todos os grupos
@@ -43,6 +45,7 @@ def game_screen(screen,assets,player_type):
     groups['all_cactos'] = all_cactos
     groups['all_puke'] = all_puke
     groups['all_bullets'] = all_bullets
+    groups['all_hearts'] = all_hearts
     
     # Cria Sprite do jogador e adiciona ao grupo
     player = Player(assets, groups, players[player_type])
@@ -68,6 +71,16 @@ def game_screen(screen,assets,player_type):
         all_sprites.add(block)
         all_blocks.add(block)
 
+    # Cria bonus de vida espalhados em posições aleatórias do mapa
+    for i in range(INITIAL_HEARTS):
+        heart_x = random.randint(4000, 5000)
+        heart_y = random.choice([400,300,200,100])
+        heart = Hearts(assets, heart_x, heart_y, world_speed)
+        
+        # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
+        all_sprites.add(heart)
+        all_hearts.add(heart)
+
     score = 0
     pygame.mixer.music.play()
     game_state = 'playing'
@@ -91,6 +104,7 @@ def game_screen(screen,assets,player_type):
                     assets[JUMP_SOUND].play()
                 if event.key == pygame.K_d and score >= boss_appears:
                     player.shoot()
+                    assets[PEW_SOUND].play()
 
         # Atualiza a ação de todos os sprites
         all_sprites.update()
@@ -116,22 +130,39 @@ def game_screen(screen,assets,player_type):
             all_sprites.add(new_cacto)
             all_cactos.add(new_cacto)
 
+        # Verifica colisao entre jogador e vida extra
+        collisions_player_heart = pygame.sprite.spritecollide(player, all_hearts, True, pygame.sprite.collide_mask)
+        if len(collisions_player_heart) > 0:
+            if player.health < 80: # Adiciona vida ao jogador se tiver menos que 80 de vida
+                player.health += 20
+            collisions_player_heart = 0
+            heart.kill()
+            heart_x = random.randint(4000, 5000)
+            heart_y = random.choice([400,300,200,100])
+            new_heart = Hearts(assets, heart_x, heart_y, world_speed)
+                
+            # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
+            all_sprites.add(new_heart)
+            all_hearts.add(new_heart)
+
         # Verifica vida do personagem
         if player.health <= 0:
             final_score = str(score)
-            with open('score.txt', 'w') as arquivo:
+            with open('txt/score.txt', 'w') as arquivo:
                 arquivo.write(final_score)
+            assets[DIE_SOUND].play()
+            se_fodeu_screen(screen,assets)
             return 'endgame'
             
             # Atualiza o high score
-            with open('high_score.txt', 'r') as file:
+            with open('txt/high_score.txt', 'r') as file:
                 X = file.read()
                 high_score = int(X)
             
             # Confere se o high score foi batido e apenas altera ele caso tenha sido
             if score > high_score:
                 high_score = score
-                with open('high_score.txt', 'w') as arquivo:
+                with open('txt/high_score.txt', 'w') as arquivo:
                     arquivo.write(str(high_score))
 
         # Verifica se algum cacto saiu da janela
@@ -178,6 +209,20 @@ def game_screen(screen,assets,player_type):
                 all_sprites.add(new_block)
                 all_blocks.add(new_block)
 
+        # Verifica se algum heart saiu da janela
+        for heart in all_hearts:
+            if heart.rect.right < 0:
+
+                # Destrói o heart e cria um novo no final da tela
+                heart.kill()
+                heart_x = random.randint(4000, 5000)
+                heart_y = random.choice([400,300,200,100])
+                new_heart = Hearts(assets, heart_x, heart_y, world_speed)
+                    
+                # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados
+                all_sprites.add(new_heart)
+                all_hearts.add(new_heart)
+
         # A cada loop, redesenha o fundo e os sprites
         screen.fill(BLACK)
 
@@ -210,6 +255,10 @@ def game_screen(screen,assets,player_type):
             boss = Boss(groups, assets)
             all_sprites.add(boss)
             foreground.add(boss)
+            assets[BACKINBLACK_SOUND].play()
+            pygame.mixer.music.set_volume(0)
+            assets[BACKINBLACK_SOUND].set_volume(0.03)
+
 
         # Junto com o primeiro boss inicia o disparo de puke
         if score >= boss_appears and boss.health > 0:
@@ -225,17 +274,25 @@ def game_screen(screen,assets,player_type):
                 if boss_die[0] == True and boss.health <= 0:
                     boss_die = [True, score+100, True]
                     boss.kill()
+                    assets[BACKINBLACK_SOUND].stop()
+                    pygame.mixer.music.set_volume(0.1)
+                    # Quando mata o segundo boss ganha o premio de usar o personagem coronita
+                    with open('txt/win.txt', 'w') as arquivo:
+                        arquivo.write('ganhou!')
 
                 # Verifica vida do primeiro boss
                 if boss.health <= 0 and boss_die[0] == False:
                     boss_die = [True, score+1000, False]
                     boss.kill()
+                    assets[BACKINBLACK_SOUND].stop()
                 collisions_boss_bullets = 0
         
         # Adiciona o segundo boss
         if boss_die[0] == True and boss_die[1] == score and boss_die[2] == False:
             boss = Boss(groups, assets)
             all_sprites.add(boss)
+            assets[BACKINBLACK_SOUND].play()
+            assets[BACKINBLACK_SOUND].set_volume(0.03)
 
         # Verifica se houve colisão entre jogador e puke
         collisions_player_puke = pygame.sprite.spritecollide(player, all_puke, True, pygame.sprite.collide_mask)

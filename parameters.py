@@ -28,6 +28,8 @@ BLOCK_IMG = 'block_img.png'
 BULLET_IMG = 'balinha.png'
 HOME_SCREEN = 'home_screen.png'
 REPLAY = 'replay_button.png'
+HEART_IMG = 'heart.png'
+MYSTERIOUS_BOX = 'mysterious_box.png'
 
 # Parametros relacionados aos sons
 JUMP_SOUND = 'jump.ogg'
@@ -82,13 +84,16 @@ DEATH = 3
 world_speed = -7
 
 # Define a quantidade inicial de:
-INITIAL_CACTOS = 3 # Cactos
+INITIAL_CACTOS = 2 # Cactos
 INITIAL_BLOCKS = 5 # Blocks
+INITIAL_HEARTS = 1
 
 # Tamanho de alguns sprites
 TILE_SIZE = 50
 BOSS_SIZE = 175
 BULLET_SIZE = 60
+HEART_SIZE = 45
+MYSTERIOUS_BOX_SIZE = 150
 
 # Score que o boss entra na tela
 boss_appears = 1500 # a definir, deixei baixo para rodar os testes

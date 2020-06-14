@@ -152,11 +152,11 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.speedy
 
         # Se bater no chão, para de cair
-        if self.rect.bottom > GROUND + self.config[4]:
+        if self.rect.bottom > GROUND:
             # Reinicia o contador de pulo
             self.jumps = 0
             # Reposiciona para a posição do chão
-            self.rect.bottom = GROUND + self.config[4]
+            self.rect.bottom = GROUND
             # Para de cair
             self.speedy = 0
             # Atualiza o estado para parado
@@ -397,5 +397,33 @@ class Cactos(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
 
     # Metodo que atualiza a posição do cacto
+    def update(self):
+        self.rect.x += self.speedx
+
+''' Classe que representa os corações que aumentam a vida do player'''
+class Hearts(pygame.sprite.Sprite):
+
+    # Construtor da classe.
+    def __init__(self, assets, x, y, speedx):
+        
+        # Construtor da classe pai (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        # Redimensiona tamanho do sprite
+        heart_img = pygame.transform.scale(assets[HEART_IMG], (HEART_SIZE, HEART_SIZE))
+
+        # Define a imagem do heart.
+        self.image = heart_img
+        self.mask = pygame.mask.from_surface(self.image)
+
+        # Detalhes sobre o posicionamento.
+        self.rect = self.image.get_rect()
+
+        # Posiciona o heart
+        self.rect.x = x
+        self.rect.y = y
+        self.speedx = speedx
+
+    # Metodo que atualiza a posição do heart
     def update(self):
         self.rect.x += self.speedx

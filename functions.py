@@ -51,7 +51,7 @@ def start_screen(screen, assets):
         START = font.render('START', True, BLACK)
         START_rect = START.get_rect()
         START_rect.x = WIDTH//8 + 295
-        START_rect.y = HEIGHT*2/4
+        START_rect.y = HEIGHT * 2/4
         screen.blit(START, [START_rect.x, START_rect.y])
         QUIT = font.render('QUIT', True, BLACK)
         QUIT_rect = QUIT.get_rect()
@@ -61,11 +61,7 @@ def start_screen(screen, assets):
         pygame.display.flip()
         pygame.display.update()
         for event in pygame.event.get():
-            
-            # Verifica se jogador desejas finalizar o jogo
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                pygame.quit()
-            
+                
             # Acrescenta o click nos botões START/QUIT
             click = pygame.mouse.get_pos()
             if START_rect.left < click[0] < START_rect.right and START_rect.top < click[1]  < START_rect.bottom:
@@ -74,14 +70,17 @@ def start_screen(screen, assets):
                 pygame.display.flip()
                 pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    return False           
-            if QUIT_rect.left< click[0] < QUIT_rect.right and QUIT_rect.top < click[1] < QUIT_rect.bottom:
+                    return 'start'           
+            if QUIT_rect.left < click[0] < QUIT_rect.right and QUIT_rect.top < click[1] < QUIT_rect.bottom:
                 QUIT = font.render('QUIT', True, GREEN)
                 screen.blit(QUIT, [QUIT_rect.x, QUIT_rect.y])
                 pygame.display.flip()
                 pygame.display.update()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     return 'quit'
+            # Verifica se jogador desejas finalizar o jogo
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                return 'quit'
 
 ''' Função que adiciona o inicio com seleção de personagens'''
 def player_screen(screen, assets):
@@ -112,11 +111,11 @@ def player_screen(screen, assets):
     mario = pygame.transform.scale(players[MARIO][0], (int(players[MARIO][1]) , int(players[MARIO][2])))
     mario_rect = mario.get_rect()
     mario_rect.x = 296
-    mario_rect.y = 238
+    mario_rect.y = 247
     yoshi = pygame.transform.scale(players[YOSHI][0], (int(players[YOSHI][1]) , int(players[YOSHI][2])))
     yoshi_rect = yoshi.get_rect()
     yoshi_rect.x = 417
-    yoshi_rect.y = 388
+    yoshi_rect.y = 400
     ash = pygame.transform.scale(players[ASH][0], (int(players[ASH][1]) , int(players[ASH][2])))
     ash_rect = ash.get_rect()
     ash_rect.x = 587
@@ -125,14 +124,19 @@ def player_screen(screen, assets):
     deadpool_rect = deadpool.get_rect()
     deadpool_rect.x = 267
     deadpool_rect.y = 368
-    coronita = pygame.transform.scale(players[CORONITA][0], (int(players[CORONITA][1]) , int(players[CORONITA][2])))
-    coronita_rect = coronita.get_rect()
-    coronita_rect.x = 417
-    coronita_rect.y = 208
     flappy = pygame.transform.scale(players[FLAPPY][0], (int(players[FLAPPY][1]) , int(players[FLAPPY][2])))
     flappy_rect = flappy.get_rect()
     flappy_rect.x = 567
     flappy_rect.y = 388
+    # Verifica se o jogador ja ganhou o jogo alguma vez
+    filesize = os.path.getsize("txt/win.txt")
+    if filesize == 0: # Se nao, aparece mysterious box
+        mysterious_box = pygame.transform.scale(assets[MYSTERIOUS_BOX], (int(MYSTERIOUS_BOX_SIZE) , int(MYSTERIOUS_BOX_SIZE)))
+    else: # Se sim, aparece coronita
+        coronita = pygame.transform.scale(players[CORONITA][0], (int(players[CORONITA][1]) , int(players[CORONITA][2])))
+        coronita_rect = coronita.get_rect()
+        coronita_rect.x = 417
+        coronita_rect.y = 208
     background_rect = background_img.get_rect()
 
     # Desenha na tela a imagem de fundo, personagens e texto
@@ -141,16 +145,22 @@ def player_screen(screen, assets):
     screen.blit(kratos, [251, 88])
     screen.blit(sonic, [417, 88])
     screen.blit(dino, [567, 88])
-    screen.blit(mario, [296, 238])
-    screen.blit(yoshi, [417, 388])
+    screen.blit(mario, [296, 247])
+    screen.blit(yoshi, [417, 400])
     screen.blit(ash, [587, 238])
     screen.blit(deadpool, [267, 368])
-    screen.blit(coronita, [417, 208])
+    # Desenha mysterious box ou coronita
+    if filesize == 0:
+        screen.blit(mysterious_box, [395, 195])
+    else:
+        screen.blit(coronita, [417, 208])
     screen.blit(flappy, [567, 388])
 
     # Verifica se o jogador clicou em algum personagem
     while True:
         for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                    return 'quit'
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = pygame.mouse.get_pos()
                 if click[0] > kratos_rect.left and click[0] < kratos_rect.right and click[1] > kratos_rect.top and click[1] < kratos_rect.bottom:
@@ -167,8 +177,9 @@ def player_screen(screen, assets):
                     return ASH
                 if click[0] > deadpool_rect.left and click[0] < deadpool_rect.right and click[1] > deadpool_rect.top and click[1] < deadpool_rect.bottom:
                     return DEADPOOL
-                if click[0] > coronita_rect.left and click[0] < coronita_rect.right and click[1] > coronita_rect.top and click[1] < coronita_rect.bottom:
-                    return CORONITA
+                if filesize != 0:
+                    if click[0] > coronita_rect.left and click[0] < coronita_rect.right and click[1] > coronita_rect.top and click[1] < coronita_rect.bottom:
+                        return CORONITA
                 if click[0] > flappy_rect.left and click[0] < flappy_rect.right and click[1] > flappy_rect.top and click[1] < flappy_rect.bottom:
                     return FLAPPY
         pygame.display.update()
@@ -191,10 +202,10 @@ def game_over_screen(screen, assets):
         screen.fill(BLACK)
         
         # Busca os valores de score e high_score nos respectivos arquivos
-        with open('high_score.txt', 'r') as file:
+        with open('txt/high_score.txt', 'r') as file:
             X = file.read()
             high_score = int(X)
-        with open('score.txt', 'r') as file:
+        with open('txt/score.txt', 'r') as file:
             Y = file.read()
             final_score = int(Y)
 
@@ -226,14 +237,25 @@ def game_over_screen(screen, assets):
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                pygame.quit()
-                return False
+                return 'quit'
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 press = pygame.mouse.get_pressed()
                 if press and background_rect.left < pos[0] < background_rect.right and background_rect.top < pos[1] < background_rect.bottom:
-                    return False
+                    return 'replay'
     
+def se_fodeu_screen(screen, assets):
 
-   
+    # Redimensiona o tamanho da imagem
+    game_over_img = pygame.transform.scale(assets[GAME_OVER_IMG], (int(WIDTH/2.114) , int(HEIGHT/2.4)))
+    background_rect = game_over_img.get_rect()
+    # Centraliza a imagem
+    background_rect.centerx = WIDTH / 2
+    background_rect.bottom = int(HEIGHT / 1.5)
     
+    # Desenha a imagem
+    screen.fill(BLACK)
+    screen.blit(game_over_img, background_rect)
+    pygame.display.flip()
+    # Pausa o jogo na tela de game over
+    time.sleep(1)    
