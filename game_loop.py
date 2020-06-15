@@ -153,6 +153,8 @@ def game_screen(screen,assets,player_type):
             with open('txt/score.txt', 'w') as arquivo:
                 arquivo.write(final_score)
             assets[DIE_SOUND].play()
+            pygame.mixer.music.stop()
+            assets[BACKINBLACK_SOUND].stop()
             se_fodeu_screen(screen,assets)
 
             # Acessa o high score
@@ -285,6 +287,7 @@ def game_screen(screen,assets,player_type):
                     boss_die = [True, score+5000, False]
                     boss.kill()
                     assets[BACKINBLACK_SOUND].stop()
+                    pygame.mixer.music.set_volume(0.1)
                 collisions_boss_bullets = 0
         
         # Adiciona o segundo boss
