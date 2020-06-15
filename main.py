@@ -9,7 +9,7 @@ Deve ser executado para rodar o jogo.
 import pygame
 import random
 import time
-from parameters import WIDTH, HEIGHT, TITULO, img_dir
+from parameters import WIDTH, HEIGHT, TITULO, img_dir 
 from game_loop import game_screen 
 from functions import *
 from assets import load_assets
@@ -20,7 +20,7 @@ pygame.mixer.init()
 # Gera tela principal
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption(TITULO)
-
+ 
 # Carrega os assets
 assets = load_assets(img_dir)
 

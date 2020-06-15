@@ -114,6 +114,12 @@ def game_screen(screen,assets,player_type):
         # Adiciona pontos ao score
         score += 5
 
+        # Verifica se houve colisão entre jogador e puke
+        collisions_player_puke = pygame.sprite.spritecollide(player, all_puke, True, pygame.sprite.collide_mask)
+        if len(collisions_player_puke) > 0:
+            player.health -= 20
+            collisions_player_puke = 0
+        
         # Verifica se houve colisão entre jogador e cacto
         hits = pygame.sprite.spritecollide(player, all_cactos, True,  pygame.sprite.collide_mask)
         if len(hits) > 0:
@@ -185,7 +191,7 @@ def game_screen(screen,assets,player_type):
                     new_cacto = Cactos(assets, cacto_x, cacto_y, world_speed)
                     OK = True
                     for cacto in all_cactos:
-                        if abs(cacto.rect.centerx - cacto_x) < 100:
+                        if abs(cacto.rect.centerx - cacto_x) < 150:
                             OK = False   
                 
                 # Adiciona também no grupo de todos os sprites para serem atualizados e desenhados              
@@ -250,6 +256,7 @@ def game_screen(screen,assets,player_type):
         # Desenha todos os sprites na tela
         all_sprites.draw(screen)
         foreground.draw(screen)
+        all_hearts.draw(screen)
 
         # Cria barra de vida
         player.life(screen)
@@ -271,7 +278,7 @@ def game_screen(screen,assets,player_type):
             # Verifica colisão do boss e bullet
             collisions_boss_bullets = pygame.sprite.spritecollide(boss, all_bullets, True, pygame.sprite.collide_mask)
             if len(collisions_boss_bullets) > 0:
-                boss.health -= 25
+                boss.health -= 30
 
                 # Verifica vida do segundo boss
                 if boss_die[0] == True and boss.health <= 0:
@@ -299,12 +306,6 @@ def game_screen(screen,assets,player_type):
             assets[BACKINBLACK_SOUND].play()
             assets[BACKINBLACK_SOUND].set_volume(0.03)
             pygame.mixer.music.set_volume(0)
-
-        # Verifica se houve colisão entre jogador e puke
-        collisions_player_puke = pygame.sprite.spritecollide(player, all_puke, True, pygame.sprite.collide_mask)
-        if len(collisions_player_puke) > 0:
-            player.health -= 20
-            collisions_player_puke = 0
     
         # Desenhando o score
         text_surface = assets[SCORE_FONT].render("{:08d}".format(score), True, BLACK)
@@ -314,7 +315,3 @@ def game_screen(screen,assets,player_type):
 
         # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
-
-
-
-

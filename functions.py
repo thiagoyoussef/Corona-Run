@@ -272,5 +272,3 @@ def game_over_screen(screen, assets):
                 press = pygame.mouse.get_pressed()
                 if press and background_rect.left < pos[0] < background_rect.right and background_rect.top < pos[1] < background_rect.bottom:
                     return 'replay'
-
-

@@ -17,7 +17,15 @@ WIDTH = 1000 # Largura da tela
 HEIGHT = 600 # Altura da tela
 FPS = 60 # Frames por segundo
 BOSS_IMG = 'boss.png'
+BOSS_1_IMG = 'boss_1_1.png'
+BOSS_2_IMG = 'boss_1_2.png'
+BOSS_3_IMG = 'boss_1_3.png'
+BOSS_4_IMG = 'boss_1_4.png'
 FINAL_BOSS = 'final_boss.png'
+FINAL_1_BOSS = 'boss_2_1.png'
+FINAL_2_BOSS = 'boss_2_2.png'
+FINAL_3_BOSS = 'boss_2_3.png'
+FINAL_4_BOSS = 'boss_2_4.png'
 BACKGROUND_IMG = 'background.png'
 CACTOS_IMG = 'cactos.png'
 SCORE_FONT = 'PressStart2P.ttf'
@@ -34,14 +42,8 @@ MYSTERIOUS_BOX = 'mysterious_box.png'
 JUMP_SOUND = 'jump.ogg'
 DIE_SOUND = 'die.wav'
 BACKINBLACK_SOUND = 'backinblack.ogg'
-CHECKPOINT_SOUND = 'checkPoint.wav'
 COINSOUND_SOUND = 'coinsound.wav'
-COUNTDOWN_SOUND = 'countdown.wav'
-EXPL3_SOUND = 'expl3.wav'
-EXPL6_SOUND = 'expl6.wav'
-FINALE_SOUND = 'finale.mp3'
 PEW_SOUND = 'pew.wav'
-WIND_SOUND = 'windsfx3.ogg'
 
 # Parametros relacionados aos jogadores
 DINO = 'dino.png'
@@ -96,4 +98,4 @@ HEART_SIZE = 45
 MYSTERIOUS_BOX_SIZE = 150
 
 # Score que o boss entra na tela
-boss_appears = 5000 
+boss_appears = 5000

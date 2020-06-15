@@ -290,27 +290,35 @@ class Boss(pygame.sprite.Sprite):
         ''' Função construtora da classe do Boss, armazena a
         sua imagem, posição, dimensões, velocidade, estabelece 
         a vida e regula a liberação dos pukes.'''
+        
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-        if boss_type == 1:
+        
+        self.boss_type = boss_type
+        self.groups = groups
+        self.assets = assets
+
+        # Define a imagem do boss de acordo com o tipo de boss
+        if self.boss_type == 1:
             boss_img = pygame.transform.scale(assets[BOSS_IMG], (BOSS_SIZE, BOSS_SIZE))
         else:
             boss_img = pygame.transform.scale(assets[FINAL_BOSS], (BOSS_SIZE, BOSS_SIZE))
+        
         self.image = boss_img
         self.mask = pygame.mask.from_surface(self.image)
+
+        # Define a posicao do boss
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH - 100
         self.rect.bottom = HEIGHT - 360
         self.speedy = 0
-        self.groups = groups
-        self.assets = assets
-
+        
         # Só será possível atirar uma vez a cada:
         self.last_shot = pygame.time.get_ticks()
         if boss_type == 1:
             self.shoot_ticks = 2000 # Caso for o primeiro boss 2000 milissegundos
         else:
-            self.shoot_ticks = 600 # Caso for o segundo boss 600 milissegundos
+            self.shoot_ticks = 1000 # Caso for o segundo boss 1000 milissegundos
 
         # Ele não pode mudar de velocidade a todo frame
         self.last_speed = pygame.time.get_ticks()
@@ -355,6 +363,30 @@ class Boss(pygame.sprite.Sprite):
         if self.rect.bottom >= HEIGHT - 100:
             self.rect.bottom = HEIGHT - 100
             self.rect.y -= self.speedy
+
+        # De acordo com o tipo de boss e sua vida muda a imagem
+        if self.boss_type == 1:
+            if self.health > 150 :
+                self.image = pygame.transform.scale(self.assets[BOSS_IMG], (BOSS_SIZE, BOSS_SIZE))
+            if self.health <= 150 :
+                self.image = pygame.transform.scale(self.assets[BOSS_1_IMG], (BOSS_SIZE, BOSS_SIZE))
+            if self.health <= 100 :
+                self.image = pygame.transform.scale(self.assets[BOSS_2_IMG], (BOSS_SIZE, BOSS_SIZE))
+            if self.health <= 50 :
+                self.image = pygame.transform.scale(self.assets[BOSS_3_IMG], (BOSS_SIZE, BOSS_SIZE))
+            if self.health <= 25 :
+                self.image = pygame.transform.scale(self.assets[BOSS_4_IMG], (BOSS_SIZE, BOSS_SIZE))
+        else:
+            if self.health > 300 :
+                self.image = pygame.transform.scale(self.assets[FINAL_BOSS], (BOSS_SIZE, BOSS_SIZE))
+            if self.health <= 300 :
+                self.image = pygame.transform.scale(self.assets[FINAL_1_BOSS], (BOSS_SIZE, BOSS_SIZE))
+            if self.health <= 200 :
+                self.image = pygame.transform.scale(self.assets[FINAL_2_BOSS], (BOSS_SIZE, BOSS_SIZE))
+            if self.health <= 100 :
+                self.image = pygame.transform.scale(self.assets[FINAL_3_BOSS], (BOSS_SIZE, BOSS_SIZE))
+            if self.health <= 25 :
+                self.image = pygame.transform.scale(self.assets[FINAL_4_BOSS], (BOSS_SIZE, BOSS_SIZE))
 
     def puke(self):
         ''' Função que representa os pukes liberados pelo Boss, 
