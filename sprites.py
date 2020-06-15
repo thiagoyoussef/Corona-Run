@@ -287,13 +287,16 @@ class Player(pygame.sprite.Sprite):
 
 ''' Classe que representa o boss'''
 class Boss(pygame.sprite.Sprite):
-    def __init__(self, groups, assets, boss_img, boss_type):
+    def __init__(self, groups, assets, boss_type):
         ''' Função construtora da classe do Boss, armazena a
         sua imagem, posição, dimensões, velocidade, estabelece 
         a vida e regula a liberação dos pukes.'''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-        boss_img = pygame.transform.scale(boss_img, (BOSS_SIZE, BOSS_SIZE))
+        if boss_type == 1:
+            boss_img = pygame.transform.scale(assets[BOSS_IMG], (BOSS_SIZE, BOSS_SIZE))
+        else:
+            boss_img = pygame.transform.scale(assets[FINAL_BOSS], (BOSS_SIZE, BOSS_SIZE))
         self.image = boss_img
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
