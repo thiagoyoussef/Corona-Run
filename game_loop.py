@@ -253,14 +253,14 @@ def game_screen(screen,assets,player_type):
 
          # Adiciona o primeiro boss após um certo score
         if score == boss_appears:
-            boss = Boss(groups, assets, assets[BOSS_IMG])
+            boss = Boss(groups, assets, assets[BOSS_IMG],1)
             all_sprites.add(boss)
             foreground.add(boss)
             assets[BACKINBLACK_SOUND].play()
             pygame.mixer.music.set_volume(0)
             assets[BACKINBLACK_SOUND].set_volume(0.03)
 
-        # Junto com o primeiro boss inicia o disparo de puke
+        # Junto com o boss inicia o disparo de puke
         if score >= boss_appears and boss.health > 0:
             boss.puke()
             boss.life(screen)
@@ -268,7 +268,7 @@ def game_screen(screen,assets,player_type):
             # Verifica colisão do boss e bullet
             collisions_boss_bullets = pygame.sprite.spritecollide(boss, all_bullets, True, pygame.sprite.collide_mask)
             if len(collisions_boss_bullets) > 0:
-                boss.health -= 40
+                boss.health -= 25
 
                 # Verifica vida do segundo boss
                 if boss_die[0] == True and boss.health <= 0:
@@ -289,7 +289,7 @@ def game_screen(screen,assets,player_type):
         
         # Adiciona o segundo boss
         if boss_die[0] == True and boss_die[1] == score and boss_die[2] == False:
-            boss = Boss(groups, assets, assets[FINAL_BOSS])
+            boss = Boss(groups, assets, assets[FINAL_BOSS],2)
             all_sprites.add(boss)
             assets[BACKINBLACK_SOUND].play()
             assets[BACKINBLACK_SOUND].set_volume(0.03)
@@ -297,7 +297,7 @@ def game_screen(screen,assets,player_type):
         # Verifica se houve colisão entre jogador e puke
         collisions_player_puke = pygame.sprite.spritecollide(player, all_puke, True, pygame.sprite.collide_mask)
         if len(collisions_player_puke) > 0:
-            player.health -= 10
+            player.health -= 20
             collisions_player_puke = 0
     
         # Desenhando o score
