@@ -294,6 +294,7 @@ def game_screen(screen,assets,player_type):
         if boss_die[0] == True and boss_die[1] == score and boss_die[2] == False:
             boss = Boss(groups, assets, 2)
             all_sprites.add(boss)
+            foreground.add(boss)
             assets[BACKINBLACK_SOUND].play()
             assets[BACKINBLACK_SOUND].set_volume(0.03)
 

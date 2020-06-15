@@ -13,7 +13,6 @@ from parameters import WIDTH, HEIGHT, TITULO, img_dir
 from game_loop import game_screen 
 from functions import *
 from assets import load_assets
-from game_loop import *
 
 pygame.init()
 pygame.mixer.init()
