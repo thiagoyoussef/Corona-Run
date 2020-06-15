@@ -26,6 +26,6 @@ rm -rf pygame
 
 Documentação com mais detalhes e opções de instalação no Mac para consulta: https://www.pygame.org/wiki/MacCompile
 
-Como executar o programa: após realizar a instalação da biblioteca adicinal necessária, é necessário que este repositório do GitHub seja clonado em seu computador. Depois disso, abra-o o com o interpretador que desejar, como o Visual Studio Code por exemplo, e execute ocódigo a partir do arquivo "main.py".
+Como executar o programa: após realizar a instalação da biblioteca adicinal necessária, é necessário que este repositório do GitHub seja clonado em seu computador. Depois disso, abra-o o com o interpretador que desejar, como o Visual Studio Code por exemplo, e execute o código a partir do arquivo "main.py".
 
 Divirta-se!

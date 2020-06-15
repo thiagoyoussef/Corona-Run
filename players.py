@@ -1,12 +1,14 @@
 from parameters import *
 
 ''' 
-Função que passa variados parametros que sera usado para
-criar os diversos tipos de personagens na classe Player
-Primeiro parametro relaciona a imagem do personagem
-Segundo parametro define tamanho x do personagem
-Terceiro parametro define tamanho y do personagem
-Quarto parametro define se será usado a animacao do dino no personagem escolhido
+Função que passa variados parâmetros utilizados para
+criar os diversos tipos de personagens na classe Player.
+
+Significados dos parâmetros:
+O primeiro parâmetro relaciona a imagem do personagem.
+O segundo parâmetro define o tamanho x do personagem.
+O terceiro parâmetro define o tamanho y do personagem.
+O quarto parâmetro define se será usada a animação do dino no personagem escolhido
 '''
 
 def load_players(assets):

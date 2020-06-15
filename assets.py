@@ -1,5 +1,6 @@
 '''
-Arquivo que carrega todos os assets
+Arquivo que carrega todos os assets do jogo, 
+referentes a imagens, sons e fontes.
 '''
 
 import pygame
@@ -8,7 +9,7 @@ from parameters import *
 import time
 import os
 
-'''Carrega todos os assets de uma vez, dentre eles imagens fontes e sons.'''
+'''Função que carrega todos os assets de uma vez, dentre eles, imagens fontes e sons.'''
 def load_assets(img_dir):
     assets = {}
     # Carrega imagens do jogo
@@ -18,7 +19,7 @@ def load_assets(img_dir):
     assets[YOSHI] = pygame.image.load(path.join(img_dir, YOSHI)).convert_alpha()
     assets[DEADPOOL] = pygame.image.load(path.join(img_dir, DEADPOOL)).convert_alpha()
     assets[DINO] = pygame.image.load(path.join(img_dir, DINO)).convert_alpha()
-    assets['dino_play.png'] = pygame.image.load(path.join(img_dir, 'dino_play.png')).convert_alpha()
+    assets[DINO_PLAY] = pygame.image.load(path.join(img_dir, DINO_PLAY)).convert_alpha()
     assets[ASH] = pygame.image.load(path.join(img_dir, ASH)).convert_alpha()
     assets[CORONITA] = pygame.image.load(path.join(img_dir, CORONITA)).convert_alpha()
     assets[FLAPPY] = pygame.image.load(path.join(img_dir, FLAPPY)).convert_alpha()
@@ -42,11 +43,11 @@ def load_assets(img_dir):
     assets[JUMP_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, JUMP_SOUND))
     assets[DIE_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, DIE_SOUND))
     assets[BACKINBLACK_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, BACKINBLACK_SOUND))
-    assets[CHECKPOINT_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, CHECKPOINT_SOUND))
+    # assets[CHECKPOINT_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, CHECKPOINT_SOUND))
     assets[COINSOUND_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, COINSOUND_SOUND))
-    assets[COUNTDOWN_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, COUNTDOWN_SOUND))
-    assets[EXPL3_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, EXPL3_SOUND))
-    assets[EXPL6_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, EXPL6_SOUND))
+    # assets[COUNTDOWN_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, COUNTDOWN_SOUND))
+    # assets[EXPL3_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, EXPL3_SOUND))
+    # assets[EXPL6_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, EXPL6_SOUND))
     #assets[FINALE_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, FINALE_SOUND))
     assets[PEW_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, PEW_SOUND))
     #assets[WIND_SOUND] = pygame.mixer.Sound(os.path.join(snd_dir, WIND_SOUND))

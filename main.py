@@ -1,6 +1,9 @@
 """
 Arquivo principal
-Inicia a tela do jogo e inicializa o pygame
+Gerencia as telas do jogo, importa bibliotecas, 
+outros arquivos, inicializa e finaliza o pygame.
+
+Deve ser executado para rodar o jogo.
 """
 
 import pygame
@@ -19,7 +22,7 @@ pygame.mixer.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption(TITULO)
 
-# Carrega assets
+# Carrega os assets
 assets = load_assets(img_dir)
 
 # Finalização 
@@ -40,4 +43,4 @@ try:
         else:
             playing = False
 finally:
-    pygame.quit()
+    pygame.quit() # Finaliza o pygame

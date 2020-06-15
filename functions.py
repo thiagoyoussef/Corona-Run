@@ -1,6 +1,8 @@
 '''
 Arquivo com todas as funções que
-serão utilizadas no pygame
+são utilizadas no pygame, entre elas:
+carregamento de spritesheet, tela inicial, 
+tela de seleção de personagens, e telas de game over.
 '''
 
 import pygame
@@ -37,7 +39,8 @@ def load_spritesheet(spritesheet, rows, columns):
             sprites.append(image)
     return sprites
 
-''' Função que adiciona a tela de start'''
+''' Função que adiciona a tela de start, gerencia o que é mostrado 
+nela e processa os eventos que podem ser executados na mesma.'''
 def start_screen(screen, assets):
     
     # Carrega a imagem e desenha ela
@@ -82,7 +85,9 @@ def start_screen(screen, assets):
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                 return 'quit'
 
-''' Função que adiciona o inicio com seleção de personagens'''
+''' Função que adiciona a tela com seleção de personagens, 
+responsável por mostrar cada um deles na tela e processar 
+os eventos decorrentes da seleção de cada um'''
 def player_screen(screen, assets):
     
     # Carrega os players
@@ -93,7 +98,7 @@ def player_screen(screen, assets):
     
     # Carrega a fonte e escolhe o que será escrito na tela
     font = assets[SCORE_FONT]
-    choose = font.render('Choose your caracter', True, BLACK)
+    choose = font.render('Choose your character', True, BLACK)
     
     # Ajusta a escala e as coordenadas dos personagens
     kratos = pygame.transform.scale(players[KRATOS][0], (int(players[KRATOS][1]) , int(players[KRATOS][2])))
@@ -104,7 +109,7 @@ def player_screen(screen, assets):
     sonic_rect = sonic.get_rect()
     sonic_rect.x = 417
     sonic_rect.y = 88
-    dino = pygame.transform.scale(assets['dino_play.png'], (int(100) , int(70)))
+    dino = pygame.transform.scale(assets[DINO_PLAY], (int(100) , int(70)))
     dino_rect = dino.get_rect()
     dino_rect.x = 567
     dino_rect.y = 88
@@ -184,7 +189,31 @@ def player_screen(screen, assets):
                     return FLAPPY
         pygame.display.update()
 
-''' Função que adiciona a tela de game over'''
+
+''' Função que mostra a imagem do 'se fudeu' na 
+tela por um segundo quando o jogador morre'''    
+def se_fodeu_screen(screen, assets):
+
+    # Redimensiona o tamanho da imagem
+    game_over_img = pygame.transform.scale(assets[GAME_OVER_IMG], (int(WIDTH/2.114) , int(HEIGHT/2.4)))
+    background_rect = game_over_img.get_rect()
+
+    # Centraliza a imagem
+    background_rect.centerx = WIDTH / 2
+    background_rect.bottom = int(HEIGHT / 1.5)
+    
+    # Desenha a imagem
+    screen.fill(BLACK)
+    screen.blit(game_over_img, background_rect)
+    pygame.display.flip()
+
+    # Pausa o jogo na tela de game over
+    time.sleep(1)    
+
+
+''' Função que adiciona a tela de game over, ela tem o papel de
+mostrar o score obtido pelo o jogador, o seu maior score já atingido,
+a autoria do jogo, e a opção de jogar novamente.'''
 def game_over_screen(screen, assets):
 
     # Redimensiona o tamanho da imagem
@@ -243,19 +272,5 @@ def game_over_screen(screen, assets):
                 press = pygame.mouse.get_pressed()
                 if press and background_rect.left < pos[0] < background_rect.right and background_rect.top < pos[1] < background_rect.bottom:
                     return 'replay'
-    
-def se_fodeu_screen(screen, assets):
 
-    # Redimensiona o tamanho da imagem
-    game_over_img = pygame.transform.scale(assets[GAME_OVER_IMG], (int(WIDTH/2.114) , int(HEIGHT/2.4)))
-    background_rect = game_over_img.get_rect()
-    # Centraliza a imagem
-    background_rect.centerx = WIDTH / 2
-    background_rect.bottom = int(HEIGHT / 1.5)
-    
-    # Desenha a imagem
-    screen.fill(BLACK)
-    screen.blit(game_over_img, background_rect)
-    pygame.display.flip()
-    # Pausa o jogo na tela de game over
-    time.sleep(1)    
+

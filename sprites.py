@@ -1,6 +1,6 @@
 '''
 Arquivo que possui todas as classes com os sprites
-que será utilizado pelo pygame
+que são utilizados pelo pygame e mostrados no jogo.
 '''
 
 import random
@@ -10,12 +10,13 @@ from assets import *
 from functions import *
 from game_loop import *
 
-''' Class que representa os blocos do cenário'''
+''' Classe que representa os blocos do cenário'''
 class Tile(pygame.sprite.Sprite):
 
     # Construtor da classe.
     def __init__(self, assets, x, y, speedx):
-        
+    ''' Função que constrói a classe do bloco, armazena a 
+    imagem do bloco, suas dimensões e sua posição.'''    
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
@@ -35,6 +36,7 @@ class Tile(pygame.sprite.Sprite):
 
     # Metodo que atualiza a posição do bloco
     def update(self):
+    ''' Função que atualiza a posição do bloco. '''    
         self.rect.x += self.speedx
 
 ''' Classe Bullet que representa os tiros'''
@@ -42,7 +44,9 @@ class Bullet(pygame.sprite.Sprite):
     
     # Construtor da classe.
     def __init__(self, assets, right, centery):
-        
+    ''' Função que constrói a classe dos tiros, armazena a
+    imagem dos  tiros, suas dimensões, posição, velocidade 
+    e mask para as colisões. '''    
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
@@ -59,7 +63,9 @@ class Bullet(pygame.sprite.Sprite):
     
     # Metodo que atualiza a posição do bullet
     def update(self):
-        
+    ''' Função que atualiza a posição dos tiros na tela
+    os remove quando necessário.'''    
+    
         # A bala só se move no eixo x
         self.rect.x += self.speedx
 
@@ -72,6 +78,11 @@ class Player(pygame.sprite.Sprite):
 
     # Construtor da classe.
     def __init__(self, assets, groups, config):
+    ''' Função que constrói a classe do player, armazena a
+    sua imagem, informações para colisões, define seus estados
+    realiza sua animação (quando necessário), posiciona a sprite,
+    delimita altura máxima, gerencia o status de sua vida e cria
+    mask para colisões. '''
 
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -118,7 +129,7 @@ class Player(pygame.sprite.Sprite):
         # Detalhes sobre o posicionamento.
         self.rect = self.image.get_rect()
 
-        # Começa o jogador no chao
+        # Começa o jogador no chão
         self.rect.centerx = WIDTH / 10
         self.rect.bottom = int(HEIGHT * 7/8)
         self.rect.top = 0
@@ -131,7 +142,7 @@ class Player(pygame.sprite.Sprite):
         self.last_shot = pygame.time.get_ticks()
         self.shoot_ticks = 400
 
-        # Variável que contem a altura maxima do jogador antes de cair
+        # Variável que contem a altura máxima do jogador antes de cair
         self.highest_y = self.rect.bottom
 
         # Contador de pulos
@@ -144,6 +155,10 @@ class Player(pygame.sprite.Sprite):
 
     # Metodo que atualiza a posição do personagem
     def update(self):
+    ''' Função que atualiza a sprite do jogador, armazena a 
+    gravidade que incide sobre ele, regula seus pulos e estados, 
+    gerencia a altura, checa colisões e faz a manutenção
+    da animação.'''    
         self.speedy += GRAVITY
 
         # Atualiza o estado para caindo
@@ -221,6 +236,8 @@ class Player(pygame.sprite.Sprite):
 
     # Método que faz o personagem pular
     def jump(self):
+    ''' Função que gerencia o pulo do personagem e 
+    armazena seus tipos de pulo.'''
         if self.jumps < 2:
             
             # Só pode pular se ainda não estiver pulando ou caindo
@@ -241,15 +258,17 @@ class Player(pygame.sprite.Sprite):
         else:
             self.jumps += 0
 
-    # Função que representa a vida do jogador
+    
     def life(self, screen):
+    '''Função que desenha a vida do jogador na tela.'''
         pygame.draw.rect(screen, (255,0,0), (self.rect.x, self.rect.y - 60, 100,10))
         if self.health >= 0:
             pygame.draw.rect(screen, (0,255,0), (self.rect.x, self.rect.y - 60, 100 - (100 - self.health),10))
 
-    # Função que representa os tiros
     def shoot(self):
-        
+    '''Função que representa os tiros dentro 
+    da classe do jogador, regula a frequência
+    com que podem ser disparados e cria novos.'''
         # Verifica se pode atirar
         now = pygame.time.get_ticks()
         
@@ -269,7 +288,9 @@ class Player(pygame.sprite.Sprite):
 ''' Classe que representa o boss'''
 class Boss(pygame.sprite.Sprite):
     def __init__(self, groups, assets, boss_img):
-
+    ''' Função construtora da classe do Boss, armazena a
+    sua imagem, posição, dimensões, velocidade, estabelece 
+    a vida e regula a liberação dos pukes.'''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
         boss_img = pygame.transform.scale(boss_img, (BOSS_SIZE, BOSS_SIZE))
@@ -295,12 +316,15 @@ class Boss(pygame.sprite.Sprite):
 
     # Metodo que atualiza a posição do boss
     def update(self):
-        
+    ''' Função responsável por atualizar a sprite do Boss, 
+    muda sua posição com o tempo, o mantém dentro da tela
+    e regula a mudança de velocidade.
+    '''    
         # Verifica se pode mudar a speed
         time = pygame.time.get_ticks()
         elapsed_ticks = time - self.last_speed
 
-        # Se já pode disparar novamente...
+        # Se já pode mudar novamente
         if elapsed_ticks > self.speed_tick:
             # Marca o tick da nova imagem.
             self.last_speed = time
@@ -325,7 +349,8 @@ class Boss(pygame.sprite.Sprite):
             self.rect.y -= self.speedy
 
     def puke(self):
-
+    ''' Função que representa os pukes liberados pelo Boss, 
+    regula sua frequência e gera novos.'''
         # Verifica se pode disparar
         now = pygame.time.get_ticks()
         # Verifica quantos ticks se passaram desde o último disparo.
@@ -343,6 +368,7 @@ class Boss(pygame.sprite.Sprite):
             self.groups['all_puke'].add(new_puke)
 
     def life(self, screen):
+    ''' Função que representa a vida do Boss e a desenha na tela.'''
         pygame.draw.rect(screen, (255,0,0), (self.rect.x , self.rect.y - 60, 200,10))
         if self.health >= 0:
             pygame.draw.rect(screen, (0,255,0), (self.rect.x, self.rect.y - 60, 200 - (200 - self.health),10))
@@ -352,7 +378,9 @@ class Puke(pygame.sprite.Sprite):
     
     # Construtor da classe.
     def __init__(self, assets, left, centery):
-        
+    ''' Função construtora da classe dos pukes, armazena a
+    sua imagem, posição, dimensões, velocidade e mask 
+    para colisões.'''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
         puke_img = pygame.transform.scale(assets[PUKE_IMG], (70, 100))
@@ -368,6 +396,9 @@ class Puke(pygame.sprite.Sprite):
 
     # Metodo que atualiza a posição do puke
     def update(self):
+    ''' Função que atualiza as sprites dos pukes,
+    muda sua posição com o tempo e deixa de
+    mostrá-los na tela quando necessário.'''
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         
@@ -378,7 +409,9 @@ class Puke(pygame.sprite.Sprite):
 ''' Classe que reprenta os cactos'''
 class Cactos(pygame.sprite.Sprite):
     def __init__(self, assets, x, y, speedx):
-        
+    ''' Função construtora da classe dos cactos, armazena
+    sua imagem, posição, dimensões, velocidade e mask 
+    para colisões.'''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
         
@@ -398,6 +431,7 @@ class Cactos(pygame.sprite.Sprite):
 
     # Metodo que atualiza a posição do cacto
     def update(self):
+    ''' Função que atualiza as sprites dos cactos mudando sua posição.'''
         self.rect.x += self.speedx
 
 ''' Classe que representa os corações que aumentam a vida do player'''
@@ -405,7 +439,8 @@ class Hearts(pygame.sprite.Sprite):
 
     # Construtor da classe.
     def __init__(self, assets, x, y, speedx):
-        
+    ''' Função construtora da classe dos corações, armazena sua
+    imagem, dimensões, posição, velocidade e mask para colisões.'''
         # Construtor da classe pai (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
@@ -426,4 +461,5 @@ class Hearts(pygame.sprite.Sprite):
 
     # Metodo que atualiza a posição do heart
     def update(self):
+    ''' Função que atualiza as sprites dos corações, mudando sua posição.'''
         self.rect.x += self.speedx

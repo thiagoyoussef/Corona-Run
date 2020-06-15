@@ -1,6 +1,6 @@
 '''
-Arquivo com todos os parâmetros que
-será utilizado nas classes e funções
+Arquivo com todos os parâmetros fixos que
+serão utilizados no código.
 '''
 
 from os import path
@@ -10,7 +10,6 @@ import pygame
 img_dir = path.join(path.dirname(__file__), 'assets', 'img')
 snd_dir = path.join(path.dirname(__file__),  'assets', 'snd')
 font_dir = path.join(path.dirname(__file__),  'assets', 'font')
-
 
 # Dados gerais do jogo.
 TITULO = 'Corona Run'
@@ -54,6 +53,7 @@ CORONITA = 'coronita.png'
 DEADPOOL = 'deadpool.png'
 ASH = 'ash.png'
 FLAPPY = 'flappy.png'
+DINO_PLAY = 'dino_play.png'
 
 # Define algumas variáveis com as cores básicas
 WHITE = (255, 255, 255)
@@ -81,11 +81,11 @@ FALLING = 2
 DEATH = 3
 
 # Define a velocidade inicial do mundo
-world_speed = -7
+world_speed = -8
 
 # Define a quantidade inicial de:
-INITIAL_CACTOS = 2 # Cactos
-INITIAL_BLOCKS = 5 # Blocks
+INITIAL_CACTOS = 3 # Cactos
+INITIAL_BLOCKS = 4 # Blocks
 INITIAL_HEARTS = 1
 
 # Tamanho de alguns sprites
@@ -96,4 +96,4 @@ HEART_SIZE = 45
 MYSTERIOUS_BOX_SIZE = 150
 
 # Score que o boss entra na tela
-boss_appears = 1500 # a definir, deixei baixo para rodar os testes
+boss_appears = 5000 

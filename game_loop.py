@@ -10,7 +10,9 @@ from sprites import *
 from functions import *
 from players import *
 
-''' Função principal do jogo'''
+''' Função principal do jogo, gerencia sprites, grupos, 
+eventos do jogo, vida dos personagens, pontuação e 
+outros aspectos do game.'''
 def game_screen(screen,assets,player_type):
 
     # Variável para o ajuste de velocidade
@@ -152,9 +154,8 @@ def game_screen(screen,assets,player_type):
                 arquivo.write(final_score)
             assets[DIE_SOUND].play()
             se_fodeu_screen(screen,assets)
-            return 'endgame'
-            
-            # Atualiza o high score
+
+            # Acessa o high score
             with open('txt/high_score.txt', 'r') as file:
                 X = file.read()
                 high_score = int(X)
@@ -164,6 +165,7 @@ def game_screen(screen,assets,player_type):
                 high_score = score
                 with open('txt/high_score.txt', 'w') as arquivo:
                     arquivo.write(str(high_score))
+            return 'endgame'
 
         # Verifica se algum cacto saiu da janela
         for cacto in all_cactos:
@@ -212,7 +214,6 @@ def game_screen(screen,assets,player_type):
         # Verifica se algum heart saiu da janela
         for heart in all_hearts:
             if heart.rect.right < 0:
-
                 # Destrói o heart e cria um novo no final da tela
                 heart.kill()
                 heart_x = random.randint(4000, 5000)
@@ -259,7 +260,6 @@ def game_screen(screen,assets,player_type):
             pygame.mixer.music.set_volume(0)
             assets[BACKINBLACK_SOUND].set_volume(0.03)
 
-
         # Junto com o primeiro boss inicia o disparo de puke
         if score >= boss_appears and boss.health > 0:
             boss.puke()
@@ -272,17 +272,17 @@ def game_screen(screen,assets,player_type):
 
                 # Verifica vida do segundo boss
                 if boss_die[0] == True and boss.health <= 0:
-                    boss_die = [True, score+100, True]
+                    boss_die = [True, score+5000, True]
                     boss.kill()
                     assets[BACKINBLACK_SOUND].stop()
                     pygame.mixer.music.set_volume(0.1)
-                    # Quando mata o segundo boss ganha o premio de usar o personagem coronita
+                    # Quando mata o segundo boss libera o personagem coronita
                     with open('txt/win.txt', 'w') as arquivo:
                         arquivo.write('ganhou!')
 
                 # Verifica vida do primeiro boss
                 if boss.health <= 0 and boss_die[0] == False:
-                    boss_die = [True, score+1000, False]
+                    boss_die = [True, score+5000, False]
                     boss.kill()
                     assets[BACKINBLACK_SOUND].stop()
                 collisions_boss_bullets = 0
