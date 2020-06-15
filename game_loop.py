@@ -5,7 +5,6 @@ Arquivo com a função principal do jogo
 import pygame
 import random
 from parameters import *
-from assets import *
 from sprites import *
 from functions import *
 from players import *
@@ -84,6 +83,7 @@ def game_screen(screen,assets,player_type):
         all_hearts.add(heart)
 
     score = 0
+    pygame.mixer.music.load(os.path.join(snd_dir, 'mario_music.ogg'))
     pygame.mixer.music.play()
     game_state = 'playing'
 
@@ -137,6 +137,7 @@ def game_screen(screen,assets,player_type):
         if len(collisions_player_heart) > 0:
             if player.health < 80: # Adiciona vida ao jogador se tiver menos que 80 de vida
                 player.health += 20
+                assets[COINSOUND_SOUND].play()
             collisions_player_heart = 0
             heart.kill()
             heart_x = random.randint(4000, 5000)
@@ -297,6 +298,7 @@ def game_screen(screen,assets,player_type):
             foreground.add(boss)
             assets[BACKINBLACK_SOUND].play()
             assets[BACKINBLACK_SOUND].set_volume(0.03)
+            pygame.mixer.music.set_volume(0)
 
         # Verifica se houve colisão entre jogador e puke
         collisions_player_puke = pygame.sprite.spritecollide(player, all_puke, True, pygame.sprite.collide_mask)

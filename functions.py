@@ -8,9 +8,9 @@ tela de seleção de personagens, e telas de game over.
 import pygame
 from parameters import *
 import time
-from game_loop import*
+import os
+from game_loop import *
 from players import load_players
-from assets import*
 
 ''' Função que retorna sprites das diferentes animações de um sprite'''
 def load_spritesheet(spritesheet, rows, columns):

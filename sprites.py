@@ -6,7 +6,6 @@ que são utilizados pelo pygame e mostrados no jogo.
 import random
 import pygame
 from parameters import *
-from assets import *
 from functions import *
 from game_loop import *
 
@@ -311,7 +310,7 @@ class Boss(pygame.sprite.Sprite):
         if boss_type == 1:
             self.shoot_ticks = 2000 # Caso for o primeiro boss 2000 milissegundos
         else:
-            self.shoot_ticks = 400 # Caso for o segundo boss 800 milissegundos
+            self.shoot_ticks = 600 # Caso for o segundo boss 600 milissegundos
 
         # Ele não pode mudar de velocidade a todo frame
         self.last_speed = pygame.time.get_ticks()
