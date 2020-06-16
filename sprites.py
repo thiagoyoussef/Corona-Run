@@ -318,7 +318,7 @@ class Boss(pygame.sprite.Sprite):
         if boss_type == 1:
             self.shoot_ticks = 2000 # Caso for o primeiro boss 2000 milissegundos
         else:
-            self.shoot_ticks = 1000 # Caso for o segundo boss 1000 milissegundos
+            self.shoot_ticks = 1750 # Caso for o segundo boss 1000 milissegundos
 
         # Ele não pode mudar de velocidade a todo frame
         self.last_speed = pygame.time.get_ticks()

@@ -123,7 +123,7 @@ def game_screen(screen,assets,player_type):
         # Verifica se houve colisão entre jogador e cacto
         hits = pygame.sprite.spritecollide(player, all_cactos, True,  pygame.sprite.collide_mask)
         if len(hits) > 0:
-            player.health -= 50
+            player.health -= 25
             OK = False
             while not OK:
                 cacto_x = random.randint (1000, 2000) 
@@ -142,7 +142,7 @@ def game_screen(screen,assets,player_type):
         collisions_player_heart = pygame.sprite.spritecollide(player, all_hearts, True, pygame.sprite.collide_mask)
         if len(collisions_player_heart) > 0:
             if player.health < 80: # Adiciona vida ao jogador se tiver menos que 80 de vida
-                player.health += 20
+                player.health += 50
                 assets[COINSOUND_SOUND].play()
             collisions_player_heart = 0
             heart.kill()
@@ -278,7 +278,7 @@ def game_screen(screen,assets,player_type):
             # Verifica colisão do boss e bullet
             collisions_boss_bullets = pygame.sprite.spritecollide(boss, all_bullets, True, pygame.sprite.collide_mask)
             if len(collisions_boss_bullets) > 0:
-                boss.health -= 30
+                boss.health -= 50
 
                 # Verifica vida do segundo boss
                 if boss_die[0] == True and boss.health <= 0:
