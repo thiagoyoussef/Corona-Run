@@ -69,7 +69,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x += self.speedx
 
         # Se o tiro passar do inicio da tela, morre.
-        if self.rect.right < 0:
+        if self.rect.right > WIDTH:
             self.kill()
 
 ''' Classe Jogador que representa o herói'''
@@ -318,7 +318,7 @@ class Boss(pygame.sprite.Sprite):
         if boss_type == 1:
             self.shoot_ticks = 2000 # Caso for o primeiro boss 2000 milissegundos
         else:
-            self.shoot_ticks = 1750 # Caso for o segundo boss 1000 milissegundos
+            self.shoot_ticks = 1300 # Caso for o segundo boss 1300 milissegundos
 
         # Ele não pode mudar de velocidade a todo frame
         self.last_speed = pygame.time.get_ticks()
@@ -442,8 +442,8 @@ class Puke(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         
-        # Se o puke passar do inicio da tela, morre.
-        if self.rect.bottom < 0:
+        # Se o puke passar do final da tela, morre.
+        if self.rect.bottom > HEIGHT:
             self.kill()
 
 ''' Classe que reprenta os cactos'''
